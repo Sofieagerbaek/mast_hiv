@@ -2,24 +2,17 @@ here::i_am("scripts/plot_weights.R")
 library(here)
 library(dplyr)
 library(magrittr)
+library(ggplot2)
 
 # Load weights from .iqtree
-weights_fast <- system("grep '^Tree weights' /maps/projects/racimolab/people/fnl270/GitHub/mast_hiv/output/mast_35/mast_35_fast.iqtree | sed 's/Tree weights: //; s/,//g'", intern = TRUE)
-weights_normal <- system("grep '^Tree weights' /maps/projects/racimolab/people/fnl270/GitHub/mast_hiv/output/mast_35/mast_35.iqtree | sed 's/Tree weights: //; s/,//g'", intern = TRUE)
-weights_fast <- as.numeric(strsplit(weights_fast, " +")[[1]])
-weights_normal <- as.numeric(strsplit(weights_normal, " +")[[1]])
+weights <- system("grep '^Tree weights' /maps/projects/racimolab/people/fnl270/GitHub/mast_hiv/output/mast_model_35/mast_model_35.iqtree | sed 's/Tree weights: //; s/,//g'", intern = TRUE)
+weights <- as.numeric(strsplit(weights, " +")[[1]])
 
-weights_fast <- reshape2::melt(weights_fast, value.name = "weight") %>%
-    mutate(group = "fast") %>%
-    mutate(tree = 1:35)
-
-weights_normal <- reshape2::melt(weights_normal, value.name = "weight") %>%
+weights <- reshape2::melt(weights, value.name = "weight") %>%
     mutate(group = "normal") %>%
     mutate(tree = 1:35)
 
-weights <- rbind(weights_fast, weights_normal)
-
-p <- ggplot(weights, aes(x = tree, y = weight, fill = group)) +
+p <- ggplot(weights, aes(x = tree, y = weight)) +
         geom_col(position = "dodge") +
         xlab("Tree") +
         ylab("Weight") +
