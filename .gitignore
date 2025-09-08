@@ -52,3 +52,5 @@ rsconnect/
 output/
 figures/
 .DS_store
+iqtree2
+bin/

@@ -6,7 +6,6 @@ library(ggplot2)
 library(reshape2)
 library(viridis)
 
-
 # Load trees
 ml18 <- read.tree("data/18_ML_trees/all_18_trimmed_ML_trees.newick")
 ml17 <- read.tree("data/17_ML_trees/17_shifted_windows_trimmed_ML_trees.newick")
