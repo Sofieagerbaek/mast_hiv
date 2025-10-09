@@ -49,11 +49,7 @@ po/*~
 rsconnect/
 
 # Others
-output/
-!output/mast_model_6/
-!output/mast_model_35/
-!output/scf/
-!output/bic_values.csv
+!output/
 figures/
 .DS_store
 iqtree2
