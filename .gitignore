@@ -50,7 +50,15 @@ rsconnect/
 
 # Others
 output/
+!output/mast_model_6/
+!output/mast_model_35/
+!output/scf/
+!output/bic_values.csv
 figures/
 .DS_store
 iqtree2
 bin/
+data/17_ML_trees/other_iqtree_files/
+data/18_ML_trees/other_iqtree_files/
+scripts/newer_MAST_post_processing_files/
+script/MAST_post_processing.rmd
