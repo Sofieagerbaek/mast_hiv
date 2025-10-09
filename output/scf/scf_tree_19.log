@@ -1,0 +1,178 @@
+IQ-TREE multicore version 2.3.6 for Linux x86 64-bit built Dec 11 2024
+Developed by Bui Quang Minh, Nguyen Lam Tung, Olga Chernomor, Heiko Schmidt,
+Dominik Schrempf, Michael Woodhams, Ly Trong Nhan, Thomas Wong
+
+Host:    PC24030008 (AVX2, FMA3, 15 GB RAM)
+Command: iqtree2 -te data/ind_trees/tree_19.newick -s data/18_ML_trees/2708_trimmed_alns_HIV_2021_subset.fasta --scfl 100 --prefix output/scf/scf_tree_19 -nt AUTO
+Seed:    670252 (Using SPRNG - Scalable Parallel Random Number Generator)
+Time:    Tue Sep 23 12:48:55 2025
+Kernel:  AVX+FMA - auto-detect threads (20 CPU cores detected)
+
+Reading alignment file data/18_ML_trees/2708_trimmed_alns_HIV_2021_subset.fasta ... Fasta format detected
+Reading fasta file: done in 0.0042697 secs
+Alignment most likely contains DNA/RNA sequences
+Alignment has 37 sequences with 8941 columns, 3524 distinct patterns
+3080 parsimony-informative, 1063 singleton sites, 4798 constant sites
+                                Gap/Ambiguity  Composition  p-value
+Analyzing sequences: done in 0.000247 secs
+   1  B.FR.83.HXBLAI_IIIB_BRU.K03455    0.70%    passed     19.65%
+   2  A                                 0.15%    passed     89.42%
+   3  A1                                2.13%    passed     95.95%
+   4  A2                                0.48%    passed     99.90%
+   5  A3                                2.14%    passed     63.50%
+   6  A6                                0.74%    passed     55.87%
+   7  B                                 1.54%    passed     84.96%
+   8  C                                 0.82%    passed     99.85%
+   9  D                                 2.30%    passed     81.94%
+  10  F1                                1.63%    passed     79.98%
+  11  F2                                1.90%    passed     83.58%
+  12  G                                 0.72%    passed     96.00%
+  13  H                                 0.59%    passed     95.29%
+  14  J                                 0.74%    passed     82.00%
+  15  K                                 4.21%    passed     27.59%
+  16  L                                 1.02%    passed     93.46%
+  17  AE                                2.18%    passed     91.20%
+  18  AG                                2.76%    passed     96.74%
+  19  cpx                               0.65%    passed     75.48%
+  20  DF                                0.73%    passed     93.16%
+  21  BC                                1.01%    passed     89.00%
+  22  CD                                0.66%    passed     99.15%
+  23  BF                                0.85%    passed     34.38%
+  24  BG                                1.45%    passed     96.00%
+  25  01B                               1.67%    passed     91.56%
+  26  A2D                               2.02%    passed     53.74%
+  27  01A1                              2.65%    passed     55.15%
+  28  A5U                               0.46%    passed     76.20%
+  29  AD                                2.99%    passed     95.07%
+  30  BF1                               1.96%    passed     80.75%
+  31  02G                               1.21%    passed     98.74%
+  32  A1D                               0.89%    passed     82.33%
+  33  02A                               1.55%    passed     28.34%
+  34  C2U                               0.43%    passed     98.79%
+  35  02B                               3.53%    passed     98.05%
+  36  01C                               0.82%    passed     97.29%
+  37  CPZ                               1.97%    failed      0.00%
+****  TOTAL                             1.47%  1 sequences failed composition chi2 test (p-value<5%; df=3)
+
+Reading input tree file data/ind_trees/tree_19.newick ...
+Measuring multi-threading efficiency up to 20 CPU cores
+Increase to 10 rounds for branch lengths
+82 trees examined
+Threads: 1 / Time: 20.229 sec / Speedup: 1.000 / Efficiency: 100% / LogL: -106028
+Threads: 2 / Time: 23.260 sec / Speedup: 0.870 / Efficiency: 43% / LogL: -106028
+BEST NUMBER OF THREADS: 1
+
+Perform fast likelihood tree search using GTR+I+G model...
+Estimate model parameters (epsilon = 5.000)
+Time for fast ML tree search: 2.193 seconds
+
+NOTE: ModelFinder requires 42 MB RAM!
+ModelFinder will test up to 484 DNA models (sample size: 8941 epsilon: 0.100) ...
+ No. Model         -LnL         df  AIC          AICc         BIC
+  1  GTR+F         98891.700    79  197941.400   197942.827   198502.174
+  2  GTR+F+I       90409.501    80  180979.002   180980.465   181546.874
+  3  GTR+F+G4      88301.668    80  176763.335   176764.798   177331.208
+  4  GTR+F+I+G4    87988.383    81  176138.766   176140.266   176713.737
+  5  GTR+F+R2      88853.672    81  177869.345   177870.844   178444.315
+  6  GTR+F+R3      87979.399    83  176124.798   176126.372   176713.965
+  7  GTR+F+R4      87847.834    85  175865.669   175867.320   176469.033
+  8  GTR+F+R5      87820.767    87  175815.534   175817.263   176433.095
+  9  GTR+F+R6      87820.510    89  175819.020   175820.830   176450.778
+ 14  GTR+F+I+R2    88120.945    82  176405.890   176407.427   176987.959
+ 15  GTR+F+I+R3    87866.955    84  175901.909   175903.522   176498.175
+ 16  GTR+F+I+R4    87823.804    86  175819.609   175821.299   176430.071
+ 17  GTR+F+I+R5    87823.420    88  175822.840   175824.610   176447.500
+ 30  SYM+R5        88563.807    84  177295.613   177297.226   177891.879
+ 38  SYM+I+R4      88573.490    83  177312.980   177314.554   177902.147
+ 52  TVM+F+R5      87842.691    86  175857.381   175859.071   176467.844
+ 60  TVM+F+I+R4    87845.712    85  175861.424   175863.075   176464.788
+ 74  TVMe+R5       88670.756    83  177507.512   177509.086   178096.679
+ 82  TVMe+I+R4     88677.288    82  177518.577   177520.113   178100.646
+ 96  TIM3+F+R5     87995.182    85  176160.364   176162.015   176763.728
+104  TIM3+F+I+R4   87998.727    84  176165.454   176167.067   176761.720
+118  TIM3e+R5      88976.662    82  178117.324   178118.861   178699.393
+126  TIM3e+I+R4    88984.295    81  178130.590   178132.089   178705.560
+140  TIM2+F+R5     87991.135    85  176152.271   176153.922   176755.635
+148  TIM2+F+I+R4   87995.709    84  176159.418   176161.030   176755.684
+162  TIM2e+R5      88656.742    82  177477.484   177479.021   178059.553
+170  TIM2e+I+R4    88667.429    81  177496.858   177498.357   178071.828
+184  TIM+F+R5      87973.812    85  176117.624   176119.276   176720.989
+192  TIM+F+I+R4    87976.952    84  176121.904   176123.517   176718.170
+206  TIMe+R5       88915.865    82  177995.730   177997.266   178577.799
+214  TIMe+I+R4     88925.042    81  178012.085   178013.584   178587.055
+228  TPM3u+F+R5    88014.435    84  176196.870   176198.482   176793.135
+236  TPM3u+F+I+R4  88017.471    83  176200.943   176202.517   176790.110
+250  TPM3+R5       89070.670    81  178303.340   178304.839   178878.310
+258  TPM3+I+R4     89078.370    80  178316.739   178318.202   178884.612
+272  TPM2u+F+R5    88011.193    84  176190.386   176191.999   176786.652
+280  TPM2u+F+I+R4  88015.550    83  176197.101   176198.675   176786.268
+294  TPM2+R5       88762.085    81  177686.170   177687.670   178261.141
+302  TPM2+I+R4     88770.564    80  177701.128   177702.591   178269.001
+316  K3Pu+F+R5     87991.680    84  176151.360   176152.972   176747.626
+324  K3Pu+F+I+R4   87994.426    83  176154.853   176156.427   176744.020
+338  K3P+R5        89008.767    81  178179.533   178181.033   178754.504
+346  K3P+I+R4      89016.130    80  178192.259   178193.722   178760.131
+360  TN+F+R5       88089.230    84  176346.461   176348.073   176942.727
+368  TN+F+I+R4     88093.391    83  176352.782   176354.357   176941.950
+382  TNe+R5        88998.168    81  178158.335   178159.835   178733.306
+390  TNe+I+R4      89007.659    80  178175.319   178176.782   178743.191
+404  HKY+F+R5      88107.362    83  176380.723   176382.297   176969.891
+412  HKY+F+I+R4    88111.018    82  176386.036   176387.573   176968.105
+426  K2P+R5        89090.630    80  178341.260   178342.723   178909.132
+434  K2P+I+R4      89098.840    79  178355.681   178357.107   178916.454
+448  F81+F+R5      91813.492    82  183790.985   183792.522   184373.054
+456  F81+F+I+R4    91817.391    81  183796.782   183798.282   184371.753
+470  JC+R5         92961.067    79  186080.135   186081.561   186640.908
+478  JC+I+R4       92964.629    78  186085.259   186086.649   186638.934
+Akaike Information Criterion:           GTR+F+R5
+Corrected Akaike Information Criterion: GTR+F+R5
+Bayesian Information Criterion:         GTR+F+I+R4
+Best-fit model: GTR+F+I+R4 chosen according to BIC
+
+All model information printed to output/scf/scf_tree_19.model.gz
+CPU time for ModelFinder: 151.719 seconds (0h:2m:31s)
+Wall-clock time for ModelFinder: 158.132 seconds (0h:2m:38s)
+
+NOTE: 16 MB RAM (0 GB) is required!
+Estimate model parameters (epsilon = 0.010)
+1. Initial log-likelihood: -91824.521
+2. Current log-likelihood: -87832.423
+3. Current log-likelihood: -87823.990
+4. Current log-likelihood: -87823.832
+5. Current log-likelihood: -87823.797
+6. Current log-likelihood: -87823.771
+7. Current log-likelihood: -87823.756
+8. Current log-likelihood: -87823.742
+9. Current log-likelihood: -87823.728
+10. Current log-likelihood: -87823.715
+11. Current log-likelihood: -87823.703
+12. Current log-likelihood: -87823.692
+13. Current log-likelihood: -87823.682
+Optimal log-likelihood: -87823.666
+Rate parameters:  A-C: 2.19537  A-G: 5.31585  A-T: 0.98384  C-G: 0.75797  C-T: 6.50418  G-T: 1.00000
+Base frequencies:  A: 0.370  C: 0.173  G: 0.236  T: 0.221
+Proportion of invariable sites: 0.458
+Site proportion and rates:  (0.272,0.454) (0.185,2.027) (0.078,4.936) (0.009,13.695)
+Parameters optimization took 13 rounds (3.221 sec)
+Wrote distance file to... 
+BEST SCORE FOUND : -87823.666
+Total tree length: 2.855
+
+Total number of iterations: 0
+CPU time used for tree search: 0.000 sec (0h:0m:0s)
+Wall-clock time used for tree search: 0.000 sec (0h:0m:0s)
+Total CPU time used: 154.844 sec (0h:2m:34s)
+Total wall-clock time used: 161.374 sec (0h:2m:41s)
+Computing site concordance factor using likelihood...
+0.410 sec
+Tree with site concordance factors written to output/scf/scf_tree_19.cf.tree
+Annotated tree (best viewed in FigTree) written to output/scf/scf_tree_19.cf.tree.nex
+Tree with branch IDs written to output/scf/scf_tree_19.cf.branch
+Concordance factors per branch printed to output/scf/scf_tree_19.cf.stat
+
+Analysis results written to: 
+  IQ-TREE report:                output/scf/scf_tree_19.iqtree
+  Maximum-likelihood tree:       output/scf/scf_tree_19.treefile
+  Screen log file:               output/scf/scf_tree_19.log
+
+Date and Time: Tue Sep 23 12:51:37 2025
