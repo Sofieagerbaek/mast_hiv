@@ -1,0 +1,907 @@
+---
+title: "Post processing and visualising MAST results"
+output: html_document
+date: "2025-10-08"
+author: "Sofie Agerbæk"
+---
+
+```{r, include = FALSE}
+library(Biostrings)
+library(ape)
+library(seqinr)
+library(tidyverse)
+library(dplyr)
+library(TreeDist)
+library(MetBrewer)
+library(phytools)
+```
+
+```{r, include = FALSE}
+library(cowplot)
+options(digits = 3)        # number of digits printed by R default (vectors, data.frames, lists)
+options(pillar.sigfig = 3) # number of digits printed by tibbles default.
+
+text_base_size   <- 12 # in pt
+fig.witdh        <- 180  # in mm
+fig.height       <- 125  # in mm
+
+# Set all text in plots to same size
+theme_set(theme_cowplot(font_size = 12, rel_small = 1, rel_tiny = 1, rel_large = 1))
+#theme_update(panel.grid.major = element_line(colour="gray85"), panel.grid.minor = element_line(colour="gray95", linetype = 7)) #gridlines or not.. 
+# Setting output sizes for plots
+knitr::opts_chunk$set(fig.width = fig.witdh/25.4)
+knitr::opts_chunk$set(fig.height = fig.height/25.4)
+knitr::opts_chunk$set(dpi = 600) # Publications want 600 dpi, for reg use less will do just fine and load faster 
+
+# Setting text size inside plots (geom_text, geom_label etc.)
+ggplot_text_size <- text_base_size / ggplot2::.pt
+# Now use: geom_text(..., size = ggplot_text_size)
+```
+
+
+```{r, include = FALSE}
+#pallettes
+pall <- met.brewer("Klimt", n = 6)
+
+options(ggplot2.discrete.fill    = pall)
+options(ggplot2.discrete.colour   = pall) 
+
+options(ggplot2.continuous.colour = scales::seq_gradient_pal(low = "white", high = "#023F62"),
+        ggplot2.continuous.fill = scales::seq_gradient_pal(low = "white", high = "#023F62"))
+
+```
+
+
+## BIC vs. number of trees
+
+Trees in order of falling weight: 30 8 31 10 2 21 6 9 4 24 14 29 16 26 19 32 20 13 1 23 25 7 12 35 28 33 27 5 17 11 18 22 3 34 15
+
+Best model has 6 trees - trees: 30 8 31 10 2 21
+
+```{r}
+BIC_table <- read.csv("../output/bic_values.csv", header = TRUE)
+
+BIC_table <- BIC_table %>% mutate("BIC_transformed" = value/10000)
+
+bic_plot <- ggplot(BIC_table, aes(x = n, y = BIC_transformed)) +
+  geom_point(colour = "black", size = 1.2) +
+  theme_bw() +
+  theme(axis.ticks = element_blank(), panel.grid.minor = element_blank(), axis.text = element_text(size = 12, colour = "black"), axis.title = element_blank())
+
+bic_plot
+```
+
+save plot
+```{r}
+ggsave("../figures/BIC_plot.png", plot = bic_plot, device = "png", width = 90, height = 60, units = "mm", dpi = 400, bg = "white")
+```
+
+
+## Distance between trees 
+
+Robinson-Foulds
+
+```{r}
+path_to_trees <- "../output/mast_model_6/mast_model_final_6.treefile"
+trees <- read.tree(path_to_trees)
+```
+
+```{r}
+pair_dist <- MutualClusteringInfo(trees)
+mds_trees <-  cmdscale(as.dist(pair_dist))
+
+plot(mds_trees)
+tree_nrs <- c(30,8,31,10,2,21)
+
+mds_trees[,1]
+mds_df <- data.frame(x = mds_trees[,1], y=mds_trees[,2], 'tree_nr' = as.character(tree_nrs))
+
+tree_dist_plot <- ggplot(mds_df, aes(x=x, y=y, colour = tree_nr))+
+  geom_point(size = 3)+
+  labs(colour = NULL, y = NULL, x = NULL)+
+  scale_colour_manual(values =pall)+
+  theme(axis.ticks = element_blank())
+tree_dist_plot
+
+```
+
+save plot 
+```{r}
+ggsave("../figures/tree_distances_6.png", plot = tree_dist_plot, device = "png", width = 85, height = 55, units = "mm", dpi = 400, bg = "white")
+```
+
+
+```{r, include=FALSE}
+rm(tree_dist_plot, pair_dist, mds_trees, mds_df, tree_nrs, path_to_trees)
+```
+
+
+## Branch support - site concordances 
+
+Site concordance factor (sCF) is the percentage of decisive (parsimony informative) alignment sites supporting a particular branch of the species tree (~33% <= sCF(b) <= 100%). sCF<33% means that another discordant branch b’ is more supported, whereas sCF=100% means that branch b is supported by all sites.
+
+All SCFs are calculated with the script iqtree_scf.sh before this visualization
+
+Loading trees. Rooting, ladderizing.. 
+```{r}
+
+tree10_scf <- read.tree("../output/scf/scf_tree_10.cf.tree")
+tree10_scf[["node.label"]]
+#splitting the node labels as these contain both bootstrap and scf values:
+vals <- do.call(rbind, strsplit(tree10_scf$node.label, "/"))
+tree10_scf$node.label <- as.numeric(vals[,2]) #scf as node labels 
+tree10_scf$bootstrap <- as.numeric(vals[,1])
+
+tree21_scf <- read.tree("../output/scf/scf_tree_21.cf.tree")
+vals <- do.call(rbind, strsplit(tree21_scf$node.label, "/"))
+tree21_scf$node.label <- as.numeric(vals[,2]) 
+tree21_scf$bootstrap <- as.numeric(vals[,1])
+
+tree30_scf <- read.tree("../output/scf/scf_tree_30.cf.tree")
+vals <- do.call(rbind, strsplit(tree30_scf$node.label, "/"))
+tree30_scf$node.label <- as.numeric(vals[,2]) 
+tree30_scf$bootstrap <- as.numeric(vals[,1])
+
+#trees with bootstraps
+plot(tree10_scf, show.node.label = TRUE)
+plot(tree21_scf, show.node.label = TRUE)
+plot(tree30_scf, show.node.label = TRUE)
+
+#rooting
+rooted_10_scf <- root(tree10_scf, outgroup = "CPZ", resolve.root = T)
+rooted_21_scf <- root(tree21_scf, outgroup = "CPZ", resolve.root = T)
+rooted_30_scf <- root(tree30_scf, outgroup = "CPZ", resolve.root = T)
+
+#ladderizing
+ladd_10_scf  <- ladderize(rooted_10_scf) 
+ladd_21_scf  <- ladderize(rooted_21_scf) 
+ladd_30_scf  <- ladderize(rooted_30_scf)
+
+#shorten the long tip labels  
+ladd_10_scf$tip.label <- sub(ladd_10_scf$tip.label, pattern = "B.FR.83.HXBLAI_IIIB_BRU.K03455", replacement = "B.FR")  
+ladd_21_scf$tip.label <- sub(ladd_21_scf$tip.label, pattern = "B.FR.83.HXBLAI_IIIB_BRU.K03455", replacement = "B.FR")  
+ladd_30_scf$tip.label <- sub(ladd_30_scf$tip.label, pattern = "B.FR.83.HXBLAI_IIIB_BRU.K03455", replacement = "B.FR")  
+
+#Drop the long branch CPZ to get better resolution
+ladd_10_scf <- drop.tip(ladd_10_scf, "CPZ")
+ladd_21_scf <- drop.tip(ladd_21_scf, "CPZ")
+ladd_30_scf <- drop.tip(ladd_30_scf, "CPZ")
+
+pall_cophylo <- met.brewer("Klimt", n = 37)
+tip_color_map <- setNames(pall_cophylo, ladd_10_scf$tip.label)
+
+tip_positions <- 1:Ntip(ladd_10_scf)  # Tip indices correspond to y-coordinates
+x_positions <- rep(max(nodeHeights(ladd_10_scf)) + 0.5, length(tip_positions))
+```
+
+Defining palette + which tips to colour 
+```{r}
+subtypes_of_interest <- c('A', 'B', 'C', 'D', 'AE', 'F1', 'cpx', 'J', 'BF') #the tips we want to colour / give a tangle
+assoc <- cbind(subtypes_of_interest, subtypes_of_interest)
+pall_cophylo <- met.brewer("Klimt", n = 9)
+```
+
+showing the pallette (for figure)
+```{r, fig.width=5, fig.height=2}
+
+palldf <- data.frame(tip = assoc[,1], color = pall_cophylo)
+palldf$tip <- factor(palldf$tip, levels = palldf$tip)
+
+# plot
+ggplot(palldf, aes(x = tip, y = 1, fill = color)) +
+  geom_point(shape = 22, size = 15) +
+  scale_fill_identity() +
+  theme_classic() +
+  theme(
+    axis.text.y = element_blank(),
+    axis.title = element_blank(),
+    axis.ticks = element_blank()
+  )
+
+```
+
+
+10 vs 21
+```{r}
+
+png("../figures/10v21_cophyloplot_w_scf.png", height = 7, width = 8, res = 400, units = "cm")
+
+obj <- cophylo(ladd_10_scf, ladd_21_scf, assoc=assoc, rotate = FALSE, use.edge.length=TRUE)
+plot(obj, part=0.42, link.col=pall_cophylo,link.lwd=1.5,link.type="curved",link.lty="solid",fsize=c(0.8,0.8), ftype = 'off', pts = FALSE)
+
+scf_left <- as.numeric(obj$trees[[1]]$node.label)
+nodes_left <- which(scf_left < 33) + Ntip(obj$trees[[1]])
+
+nodelabels.cophylo( #left node labels
+  node = nodes_left,
+  pch = 19,
+  col = "red",
+  cex = 0.5
+)
+
+scf_right <- as.numeric(obj$trees[[2]]$node.label)
+nodes_right <- which(scf_right < 33) + Ntip(obj$trees[[2]])
+
+nodelabels.cophylo(
+  node = nodes_right,
+  pch = 19, 
+  col = "red",
+  cex = 0.5,
+  which = "right"
+)
+
+dev.off()
+```
+
+10 vs 30
+```{r}
+png("../figures/10v30_cophyloplot_w_scf.png", height = 7, width = 8, res = 400, units = "cm")
+
+obj <- cophylo(ladd_10_scf, ladd_30_scf, assoc=assoc, rotate = FALSE, use.edge.length=TRUE)
+plot(obj, part=0.42, link.col=pall_cophylo,link.lwd=1.5,link.type="curved",link.lty="solid",fsize=c(0.8,0.8), ftype = 'off', pts = FALSE)
+
+scf_left <- as.numeric(obj$trees[[1]]$node.label)
+nodes_left <- which(scf_left < 33) + Ntip(obj$trees[[1]])
+
+nodelabels.cophylo( #left node labels
+  node = nodes_left,
+  pch = 19,
+  col = "red",
+  cex = 0.5
+)
+
+scf_right <- as.numeric(obj$trees[[2]]$node.label)
+nodes_right <- which(scf_right < 33) + Ntip(obj$trees[[2]])
+
+nodelabels.cophylo(
+  node = nodes_right,
+  pch = 19, 
+  col = "red",
+  cex = 0.5,
+  which = "right"
+)
+
+
+dev.off()
+```
+
+21 vs 30
+```{r}
+png("../figures/21v30_cophyloplot_w_scf.png", height = 7, width = 8, res = 400, units = "cm")
+
+obj <- cophylo(ladd_21_scf, ladd_30_scf, assoc=assoc, rotate = FALSE, use.edge.length=TRUE)
+plot(obj, part=0.42, link.col=pall_cophylo,link.lwd=1.5,link.type="curved",link.lty="solid",fsize=c(0.8,0.8), ftype = 'off', pts = FALSE)
+
+scf_left <- as.numeric(obj$trees[[1]]$node.label)
+nodes_left <- which(scf_left < 33) + Ntip(obj$trees[[1]])
+
+nodelabels.cophylo( #left node labels
+  node = nodes_left,
+  pch = 19,
+  col = "red",
+  cex = 0.5
+)
+
+scf_right <- as.numeric(obj$trees[[2]]$node.label)
+nodes_right <- which(scf_right < 33) + Ntip(obj$trees[[2]])
+
+nodelabels.cophylo(
+  node = nodes_right,
+  pch = 19, 
+  col = "red",
+  cex = 0.5,
+  which = "right"
+)
+
+
+dev.off()
+```
+
+
+## Contributions to disconcordance 
+
+Calculating the MCI for the three highest weighted trees
+```{r}
+taxon.contribution.to.disc <- function(tr1, tr2){
+	taxa <- intersect(tr1$tip.label, tr2$tip.label)
+	disc.metric <- vector()
+	for(i in 1:length(taxa)){
+		# For an inverse, where higher values are taxa that contribute least to discordance
+		#disc.metric[i] <- ClusteringInfoDistance(drop.tip(tr1, taxa[i]), drop.tip(tr2, taxa[i]))
+		# More intuitive, where higher values are taxa that contribute most to discordance 
+		disc.metric[i] <- MutualClusteringInfo(drop.tip(tr1, taxa[i]), drop.tip(tr2, taxa[i]))
+	}
+	names(disc.metric) <- taxa
+	return(disc.metric)
+}
+
+```
+
+10 vs 21
+```{r}
+disc_10_21 <- taxon.contribution.to.disc(ladd_10_scf, ladd_21_scf)
+
+hiv_contrib_10_21 <- sort(disc_10_21[c("A", "B", "C", "D", "AE", "F1", "cpx", "J", "BF")])
+
+taxa_colors <- setNames(pall_cophylo, c("A", "B", "C", "D", "AE", "F1", "cpx", "J", "BF"))
+
+hiv_contrib_tab_10_21 <- data.frame(
+  subt = factor(names(hiv_contrib_10_21), levels = names(hiv_contrib_10_21)),
+  contrib = hiv_contrib_10_21)
+
+ggplot(hiv_contrib_tab_10_21, aes(x = subt, y = contrib, fill = subt)) +
+  geom_col() +
+  scale_fill_manual(values = taxa_colors) +
+  coord_cartesian(ylim=c(8.1, 8.8)) +
+  theme(panel.grid.major.y = element_line(color = "grey90"), axis.ticks = element_blank(), legend.position = "none")
+
+```
+
+10 vs 30
+```{r}
+disc_10_30 <- taxon.contribution.to.disc(ladd_10_scf, ladd_30_scf)
+hiv_contrib_10_30 <- sort(disc_10_30[c("A", "B", "C", "D", "AE", "F1", "cpx", "J", "BF")])
+
+hiv_contrib_tab_10_30 <- data.frame(
+  subt = factor(names(hiv_contrib_10_30), levels = names(hiv_contrib_10_30)),
+  contrib = hiv_contrib_10_30)
+
+head(hiv_contrib_tab_10_30)
+
+ggplot(hiv_contrib_tab_10_30, aes(x = subt, y = contrib, fill = subt)) +
+  geom_col() +
+  scale_fill_manual(values = taxa_colors) +
+  coord_cartesian(ylim=c(6.8, 7.5)) +
+  theme(panel.grid.major.y = element_line(color = "grey90"), axis.ticks = element_blank(), legend.position = "none")
+
+```
+
+21 vs. 30
+```{r}
+disc_21_30 <- taxon.contribution.to.disc(ladd_21_scf, ladd_30_scf)
+
+hiv_contrib_21_30 <- sort(disc_21_30[c("A", "B", "C", "D", "AE", "F1", "cpx", "J", "BF")])
+
+hiv_contrib_tab_21_30 <- data.frame(
+  subt = factor(names(hiv_contrib_21_30), levels = names(hiv_contrib_21_30)),
+  contrib = hiv_contrib_21_30)
+
+head(hiv_contrib_tab_21_30)
+
+ggplot(hiv_contrib_tab_21_30, aes(x = subt, y = contrib, fill = subt)) +
+  geom_col() +
+  scale_fill_manual(values = taxa_colors) +
+  coord_cartesian(ylim=c(7.3, 8)) +
+  theme(panel.grid.major.y = element_line(color = "grey90"), axis.ticks = element_blank(), legend.position = "none")
+
+```
+
+
+
+```{r}
+pdf("../figures/Fig_taxon_contribution.pdf", width = 5, height = 1.5, useDingbats = F)
+
+ggplot(hiv_contrib_tab_10_21, aes(x = subt, y = contrib, fill = subt)) +
+  geom_col() +
+  scale_fill_manual(values = taxa_colors) +
+  coord_cartesian(ylim=c(8.1, 8.8)) +
+  theme(panel.grid.major.y = element_line(color = "grey90"), axis.ticks = element_blank(), 
+        legend.position = "none", axis.title = element_blank())
+
+ggplot(hiv_contrib_tab_10_30, aes(x = subt, y = contrib, fill = subt)) +
+  geom_col() +
+  scale_fill_manual(values = taxa_colors) +
+  coord_cartesian(ylim=c(6.8, 7.5)) +
+  theme(panel.grid.major.y = element_line(color = "grey90"), axis.ticks = element_blank(), 
+        legend.position = "none", axis.title = element_blank())
+
+ggplot(hiv_contrib_tab_21_30, aes(x = subt, y = contrib, fill = subt)) +
+  geom_col() +
+  scale_fill_manual(values = taxa_colors) +
+  coord_cartesian(ylim=c(7.3, 8)) +
+  theme(panel.grid.major.y = element_line(color = "grey90"), axis.ticks = element_blank(), 
+        legend.position = "none", axis.title = element_blank())
+
+dev.off()
+```
+
+```{r}
+rm(hiv_contrib_tab_10_30, hiv_contrib_tab_10_21, hiv_contrib_tab_21_30, hiv_contrib_10_30, hiv_contrib_10_21, hiv_contrib_21_30, disc_10_30, disc_10_21, disc_21_30, nodes_left, nodes_right, scf_left, scf_right, tip_color_map, tip_positions)
+```
+
+
+
+## gappy-ness of alignment 
+
+```{r}
+
+aln <- readDNAMultipleAlignment("../data/2708_trimmed_alns_HIV_2021_subset.fasta")
+aln_mat <- as.matrix(aln)
+
+nseq <- nrow(aln_mat)
+gaps <- colSums(aln_mat == "-") / nseq 
+
+gapdf <- data.frame(gap_prop = gaps)
+gapdf$site <- as.numeric(row.names(gapdf))
+
+```
+
+```{r}
+spline_int <- as.data.frame(spline(gapdf$site, gapdf$gap_prop))
+spline_int[spline_int$y<0,]$y <- 0
+
+window <- 20  # smoothing window size
+rolling_mean <- zoo::rollapply(gapdf$gap_prop, width = window, mean, partial = TRUE)
+gapdf$rollingmean <- rolling_mean
+
+gapprop_plot <- ggplot(gapdf) + 
+  geom_point(aes(x = site, y = gap_prop), size = 0.7, color = "grey80") +
+  geom_line(aes(x = site, y = rollingmean), color = "grey50", alpha = 0.9) +
+  scale_x_continuous(expand = c(0, 0), breaks = c(0,1000,2000,3000,4000,5000,6000,7000,8000,9000))+
+  scale_y_continuous(breaks = c(0,0.25,0.5))+
+  theme(axis.title = element_blank(),
+        axis.ticks.y = element_blank(),
+        axis.line.x = element_blank(),
+        axis.ticks.x = element_blank(),
+        axis.text.x = element_blank())
+
+gapprop_plot
+
+```
+## Entropy of alignment
+
+```{r}
+dna <- read.dna("../data/2708_trimmed_alns_HIV_2021_subset.fasta", format = "fasta")
+M <- as.character(dna)
+
+site_entropy <- function(M, gaps = c("-", "N", "n"), base = 2) {
+  apply(M, 2, function(col) {
+    col <- col[!(col %in% gaps)]
+    if (!length(col)) return(NA_real_)
+    p <- prop.table(table(col))
+    -sum(p * log(p, base = base))
+  })
+}
+
+H_nogap <- site_entropy(M)
+entropydf <- data.frame(H_nogap = H_nogap)
+entropydf$site <- as.numeric(rownames(entropydf))
+
+```
+
+
+```{r}
+window <- 20  # smoothing window size
+rolling_mean <- zoo::rollapply(entropydf$H_nogap, width = window, mean, fill = NA)
+entropydf$rollingmean <- rolling_mean
+
+windowentropy <- ggplot(entropydf, aes(x = site)) +
+  geom_point(aes(y = H_nogap),  size = 0.7, alpha = 0.4, color = "grey80") +
+  geom_line(aes(y = rolling_mean), color = "grey50", alpha = 0.9) +
+  scale_x_continuous(expand = c(0, 0), breaks = c(0,1000,2000,3000,4000,5000,6000,7000,8000,9000))+
+  scale_y_continuous(breaks = c(0,1,2))+
+  scale_colour_manual(values =pall)+
+  theme(axis.title = element_blank(),
+        axis.ticks.y = element_blank(),
+        legend.position = 'bottom')+
+  labs(y = "Class proportion")+
+  guides(colour = 'none')
+
+windowentropy
+
+```
+
+
+```{r}
+library(patchwork)
+comb_plot <- gapprop_plot / windowentropy
+comb_plot
+```
+
+
+```{r}
+ggsave("../figures/gappy_entropy.png", comb_plot, device = 'png', width = 190, height = 70, units = 'mm', dpi = 300, bg = 'white')
+```
+
+```{r}
+pdf("../figures/gappy_entropy.pdf", height = 0.7874, width = 7.087)
+gapprop_plot / windowentropy
+dev.off()
+```
+
+
+## Modal classes
+
+Windows to find each positions most likely tree (their contextual/modal class) among the 6 highest weighted/most likely trees. 
+
+We first assign most likely tree at each site (the tree with highest likelihood). = A matrix with a tree number on each of the sites. Then do sliding windows in increments of 1.
+Then we find the most likely tree over this window (= modal = the tree with most occurrences in the current window) --> 
+We get out a modal tree for each window.
+Then for each site we look at all the windows and find the tree most common in those windows = the modal tree of this site. 
+
+
+### Site probabilities (we end up not using these)
+
+Loading the site probability matrix 
+```{r}
+trimmed_siteprob <- read_tsv("../output/mast_model_6/mast_model_final_6.siteprob", show_col_types = FALSE) %>% select(-1)
+```
+
+Trees in order of descending weight in full model (ie. the order they  were given in the second run iterative run):
+30 8 31 10 2 21 6 9 4 24 14 29 16 26 19 ...
+
+Window-size = 20bp
+
+```{r}
+colSums(trimmed_siteprob[1:6])
+colnames(trimmed_siteprob) <- c('tree_30', 'tree_8', 'tree_31', 'tree_10','tree_2', 'tree_21')
+
+trimmed_siteprob$most_probable <- colnames(trimmed_siteprob)[apply(trimmed_siteprob, 1, which.max)]
+
+names(which.max(table(trimmed_siteprob$most_probable)))
+
+window_size = 20
+
+#find the modal class - ie for each 20 bp segment, what is the most likely/probable tree
+
+most_prob_segment <- c()
+for (i in 1:dim(trimmed_siteprob)[1]) {
+  
+  if (i >= dim(trimmed_siteprob)[1]-window_size) {
+    segment <- trimmed_siteprob[i:dim(trimmed_siteprob)[1],]
+    most_freq <- names(which.max(table(segment$most_probable)))
+    most_prob_segment <- append(most_prob_segment, most_freq)
+  } else {
+    segment <- trimmed_siteprob[i:(i+window_size),]
+    most_freq <- names(which.max(table(segment$most_probable)))
+    most_prob_segment <- append(most_prob_segment, most_freq)
+  }
+}
+
+
+table(most_prob_segment)
+
+trimmed_siteprob$window_prob <- most_prob_segment
+
+modal_class <- c()
+modal_likelihood <- c()
+modal_proportion <- c()
+
+for (i in 1:dim(trimmed_siteprob)[1]) {
+  if (i<20) { segment <- trimmed_siteprob[1:(i+(window_size-1)),]
+  } else if (i>dim(trimmed_siteprob)[1]-(window_size-1)) {       
+    segment <- trimmed_siteprob[(i-(window_size-1)):dim(trimmed_siteprob)[1],]
+  } else {
+    segment <- trimmed_siteprob[(i-(window_size-1)):(i+(window_size-1)),] 
+  }
+  most_freq <- names(which.max(table(segment$window_prob)))
+  modal_class <- append(modal_class, most_freq)
+  modal_likelihood <- append(modal_likelihood,  mean(segment[[most_freq]], na.rm = TRUE))
+  modal_proportion <- append(modal_proportion, (sum(segment$window_prob == most_freq)/dim(segment)[1]))
+}
+
+table(most_prob_segment)
+table(modal_class)
+summary(modal_likelihood)
+
+trimmed_siteprob$modal_class <- modal_class
+trimmed_siteprob$modal_prob  <- modal_likelihood
+trimmed_siteprob$modal_prop  <- modal_proportion
+
+trimmed_siteprob$site <- as.numeric(row.names(trimmed_siteprob))
+```
+
+
+
+Compare these modal classes across genome, is it random or stratified in a meaningful manner. 
+
+Confidence plot: 
+How sure are the sites in their most supported tree. The likelihood of the modal tree, ie- the tree assigned to most of the windows containing this site - this may be different from the initial site probabilities. A way to spatially resolve the likelihood of different trees across the genome. visualize with curve (or something)
+
+```{r}
+#trimmed_siteprob$modal_class <- factor(trimmed_siteprob$modal_class, levels = c('tree_30', 'tree_8', 'tree_31','tree_10','tree_2',  'tree_21'))
+
+pall <- c("#3c4b99", "#924099", "#df9ed4", "#c93f55", "#eacc62", "#469d76")
+
+
+modal_class_plot <- ggplot(trimmed_siteprob, aes(x = site, y = 'tree', colour = modal_class))+
+  geom_point(size = 12, shape = 108)+
+  theme(axis.title = element_blank(),
+        axis.ticks.y = element_blank(),
+        axis.text.y = element_blank(),
+        axis.line.y = element_blank(),
+        legend.position = 'top')+
+   scale_colour_manual(values = pall)+
+   scale_x_continuous(expand = c(0, 0), breaks = c(0,1000,2000,3000,4000,5000,6000,7000,8000,9000))#+
+   #guides(colour = 'none')
+modal_class_plot
+```
+
+save plot
+```{r}
+ggsave("../figures/probability_modal_class_plot.png", modal_class_plot, device = 'png', width = 180, height = 20, units = 'mm', dpi = 300, bg = 'white')
+
+```
+
+Line plot of mean modal probability across sites 
+```{r}
+spline_int <- as.data.frame(spline(trimmed_siteprob$site, trimmed_siteprob$modal_prob))
+
+mean_prob_plot <- ggplot(trimmed_siteprob) + 
+  geom_line(data = spline_int, aes(x = x, y = y), alpha = 0.5, color = "grey50")+
+  geom_point(aes(x = site, y = modal_prob, colour = modal_class), size = 0.7) +
+  scale_x_continuous(expand = c(0, 0), breaks = c(0,1000,2000,3000,4000,5000,6000,7000,8000,9000))+
+  scale_y_continuous(breaks = c(0,0.1,0.3,0.5,1))+
+  scale_colour_manual(values =pall)+
+  theme(axis.title = element_blank(),
+        axis.ticks.y = element_blank(),
+        legend.position = 'bottom')+
+#  labs(y = "Mean probability")+
+  guides(colour = 'none')
+mean_prob_plot
+```
+
+save to png 
+```{r}
+ggsave("../figures/mean_probability_modal.png", mean_prob_plot, device = 'png', width = 173, height = 32, units = 'mm', dpi = 400, bg = 'white')
+```
+
+Line plot of proportion supporting class in each window 
+```{r}
+spline_int <- as.data.frame(spline(trimmed_siteprob$site, trimmed_siteprob$modal_prop))
+
+proportion_plot <- ggplot(trimmed_siteprob) + 
+  geom_line(data = spline_int, aes(x = x, y = y), color = "grey50", alpha = 0.5)+
+  geom_point(aes(x = site, y = modal_prop, colour = modal_class), size = 0.7) +
+  scale_x_continuous(expand = c(0, 0), breaks = c(0,1000,2000,3000,4000,5000,6000,7000,8000,9000))+
+  scale_colour_manual(values =pall)+
+  theme(axis.title = element_blank(),
+        axis.ticks.y = element_blank(),
+        legend.position = 'bottom')+
+  labs(y = "Class proportion")+
+  guides(colour = 'none')
+proportion_plot
+```
+
+save to png
+```{r}
+ggsave("../figures/2409_proportion_modal.png", proportion_plot, device = 'png', width = 173, height = 32, units = 'mm', dpi = 400, bg = 'white')
+
+```
+
+Combined plot
+```{r}
+library(patchwork)
+modal_class_plot / mean_prob_plot / proportion_plot
+```
+
+
+write to file 
+```{r}
+write.csv(trimmed_siteprob, file = "../output/trimmed_siteprob_w_modal_classes.tsv")
+```
+
+
+### Site likelihood
+
+Loading the site likelihood matrix 
+```{r}
+trimmed_sitelh <- read.table("../output/mast_model_6/mast_model_final_6.sitelh", header = TRUE)
+```
+
+Trees in order of descending weight:
+30 8 31 10 2 21 6 9 4 24 14 29 16 26 19 ...
+
+
+```{r}
+colnames(trimmed_sitelh) <- c("site", "LnL", 'tree_30', 'tree_8', 'tree_31', 'tree_10','tree_2', 'tree_21')
+
+long_sitelh <- pivot_longer(trimmed_sitelh, cols = c('tree_30', 'tree_8', 'tree_31', 'tree_10','tree_2', 'tree_21'), values_to = "likelihood", names_to = "tree")
+long_sitelh$LnL <- NULL
+
+long_sitelh <- long_sitelh %>%
+                      group_by(site) %>%
+                      mutate(rellh = (max(likelihood)) - (sort(likelihood, decreasing = TRUE)[2]),
+                             rank = rev(base::rank(likelihood)))
+
+#removing all other ranks than 1, to get just one row / site
+rel_lh <- long_sitelh %>% filter(rank==1)
+
+trimmed_sitelh$rel_lh <- rel_lh$rellh
+            
+```
+
+
+```{r}
+trimmed_sitelh$most_likely <- colnames(trimmed_sitelh[3:8])[apply(trimmed_sitelh[3:8], 1, which.max)]
+
+names(which.max(table(trimmed_sitelh$most_likely)))
+
+window_size = 20
+
+#find the modal class - ie for each 20 bp segment, what is the most likely/probable tree
+
+most_likely_segment <- c()
+for (i in 1:dim(trimmed_sitelh)[1]) {
+  
+  if (i >= dim(trimmed_sitelh)[1]-window_size) {
+    segment <- trimmed_sitelh[i:dim(trimmed_sitelh)[1],]
+    most_freq <- names(which.max(table(segment$most_likely)))
+    most_likely_segment <- append(most_likely_segment, most_freq)
+  } else {
+    segment <- trimmed_sitelh[i:(i+window_size),]
+    most_freq <- names(which.max(table(segment$most_likely)))
+    most_likely_segment <- append(most_likely_segment, most_freq)
+  }
+}
+
+table(most_likely_segment)
+
+trimmed_sitelh$window_lh <- most_likely_segment
+
+modal_class <- c()
+modal_rellikelihood <- c()
+modal_proportion <- c()
+
+for (i in 1:dim(trimmed_sitelh)[1]) {
+  if (i<20) { segment <- trimmed_sitelh[1:(i+(window_size-1)),]
+  } else if (i>dim(trimmed_sitelh)[1]-(window_size-1)) {       
+    segment <- trimmed_sitelh[(i-(window_size-1)):dim(trimmed_sitelh)[1],]
+  } else {
+    segment <- trimmed_sitelh[(i-(window_size-1)):(i+(window_size-1)),] 
+  }
+  most_freq <- names(which.max(table(segment$window_lh)))
+  modal_class <- append(modal_class, most_freq)
+  modal_rellikelihood <- append(modal_rellikelihood,  mean(segment$rel_lh, na.rm = TRUE))
+  modal_proportion <- append(modal_proportion, (sum(segment$window_lh == most_freq)/dim(segment)[1]))
+}
+
+table(most_likely_segment)
+table(modal_class)
+summary(modal_rellikelihood)
+
+trimmed_sitelh$modal_class <- modal_class
+trimmed_sitelh$modal_prob <- modal_rellikelihood
+trimmed_sitelh$modal_prop <- modal_proportion
+
+trimmed_sitelh$site <- as.numeric(row.names(trimmed_sitelh))
+```
+
+
+
+Compare these modal classes across genome, is it random or stratified in a meaningful manner. 
+
+Confidence plot: 
+How sure are the sites in their most supported tree. The likelihood of the modal tree, ie- the tree assigned to most of the windows containing this site - this may be different from the initial site probabilities. A way to spatially resolve the likelihood of different trees across the genome. visualize with curve (or something)
+
+```{r}
+#trimmed_siteprob$modal_class <- factor(trimmed_siteprob$modal_class, levels = c('tree_30', 'tree_8', 'tree_31','tree_10','tree_2',  'tree_21'))
+
+pall <- c("#3c4b99", "#924099", "#df9ed4", "#c93f55", "#eacc62", "#469d76")
+
+
+modal_class_plot <- ggplot(trimmed_sitelh, aes(x = site, y = 'tree', colour = modal_class))+
+  geom_point(size = 12, shape = 108)+
+  theme(axis.title = element_blank(),
+        axis.ticks.y = element_blank(),
+        axis.text.y = element_blank(),
+        axis.line.y = element_blank(),
+        legend.position = 'top')+
+   scale_colour_manual(values = pall)+
+   scale_x_continuous(expand = c(0, 0), breaks = c(0,1000,2000,3000,4000,5000,6000,7000,8000,9000))#+
+   #guides(colour = 'none')
+modal_class_plot
+```
+
+
+```{r}
+ggsave("../figures/likelihood_modal_class_plot.png", modal_class_plot, device = 'png', width = 180, height = 20, units = 'mm', dpi = 300, bg = 'white')
+
+```
+
+
+```{r}
+spline_int <- as.data.frame(spline(trimmed_sitelh$site, trimmed_sitelh$modal_prob))
+
+mean_prob_plot <- ggplot(trimmed_sitelh) + 
+  geom_line(data = spline_int, aes(x = x, y = y), alpha = 0.5, color = "grey50")+
+  geom_point(aes(x = site, y = modal_prob, colour = modal_class), size = 0.7) +
+  scale_x_continuous(expand = c(0, 0), breaks = c(0,1000,2000,3000,4000,5000,6000,7000,8000,9000))+
+  scale_y_continuous(breaks = c(0,1,2,3,4))+
+  scale_colour_manual(values =pall)+
+  theme(axis.title = element_blank(),
+        axis.ticks.y = element_blank(),
+        legend.position = 'bottom')+
+#  labs(y = "Mean probability")+
+  guides(colour = 'none')
+
+mean_prob_plot
+```
+
+save to png 
+```{r}
+ggsave("../figures/mean_likelihood_modal.png", mean_prob_plot, device = 'png', width = 173, height = 32, units = 'mm', dpi = 400, bg = 'white')
+```
+
+
+```{r}
+spline_int <- as.data.frame(spline(trimmed_sitelh$site, trimmed_sitelh$modal_prop))
+
+proportion_plot <- ggplot(trimmed_sitelh) + 
+  geom_line(data = spline_int, aes(x = x, y = y), color = "grey50", alpha = 0.5)+
+  geom_point(aes(x = site, y = modal_prop, colour = modal_class), size = 0.7) +
+  scale_x_continuous(expand = c(0, 0), breaks = c(0,1000,2000,3000,4000,5000,6000,7000,8000,9000))+
+  scale_colour_manual(values =pall)+
+  theme(axis.title = element_blank(),
+        axis.ticks.y = element_blank(),
+        legend.position = 'bottom')+
+  labs(y = "Class proportion")+
+  guides(colour = 'none')
+proportion_plot
+```
+
+save to png
+```{r}
+ggsave("../figures/proportion_modal.png", proportion_plot, device = 'png', width = 173, height = 32, units = 'mm', dpi = 400, bg = 'white')
+
+```
+
+
+```{r}
+trimmed_sitelh$windowentropy <- entropydf$rollingmean
+trimmed_sitelh$gappyness <- gapdf$rollingmean
+```
+
+```{r}
+library(patchwork)
+modal_class_plot / mean_prob_plot / proportion_plot 
+```
+
+```{r}
+entropy_plot <- ggplot(trimmed_sitelh) + 
+  geom_line(aes(x = site, y = windowentropy), color = "grey50", alpha = 0.5)+
+  geom_point(aes(x = site, y = windowentropy, colour = modal_class), size = 0.7) +
+  scale_x_continuous(expand = c(0, 0), breaks = c(0,1000,2000,3000,4000,5000,6000,7000,8000,9000))+
+  scale_colour_manual(values =pall)+
+  theme(axis.title = element_blank(),
+        axis.ticks.y = element_blank(),
+        legend.position = 'bottom')+
+  labs(y = "Class proportion")+
+  guides(colour = 'none')
+entropy_plot
+
+gappy_plot <- ggplot(trimmed_sitelh) + 
+  geom_line(aes(x = site, y = gappyness), color = "grey50", alpha = 0.5)+
+  geom_point(aes(x = site, y = gappyness, colour = modal_class), size = 0.7) +
+  scale_x_continuous(expand = c(0, 0), breaks = c(0,1000,2000,3000,4000,5000,6000,7000,8000,9000))+
+  scale_colour_manual(values =pall)+
+  theme(axis.title = element_blank(),
+        axis.ticks.y = element_blank(),
+        legend.position = 'bottom')+
+  labs(y = "Class proportion")+
+  guides(colour = 'none')
+gappy_plot
+
+```
+
+
+```{r}
+plot <- modal_class_plot / mean_prob_plot / proportion_plot / gappy_plot / entropy_plot
+
+plot
+```
+
+Saving files 
+```{r}
+svg("../figures/sitelh_plots.svg", height = 18, width = 15, bg = "white")
+plot
+dev.off()
+```
+
+
+```{r}
+png("../figures/sitelh_plots.png", height = 6, width = 8, units = "in", res = 300)
+plot
+dev.off()
+```
+
