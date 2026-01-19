@@ -5,9 +5,8 @@ date: "2025-08-27"
 author: "Sofie Agerbæk"
 ---
 
-
 Load alignment, trim data, subset data into partitions 
-For each partition make a NJ tree, save these as newick files.
+For each partition make a ML tree, save these as newick files.
 
 ```{r, echo=FALSE}
 library(seqinr)
