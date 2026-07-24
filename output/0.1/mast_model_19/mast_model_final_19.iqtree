@@ -1,0 +1,97 @@
+IQ-TREE 3.0.1 built Jun 30 2025
+
+Input file name: /Users/gzd130/Library/CloudStorage/OneDrive-RegionSjælland/Mol_phylo/revision/mast_hiv/data/0.1_trimmed_alns_HIV_2021_subset.fasta
+User tree file name: /Users/gzd130/Library/CloudStorage/OneDrive-RegionSjælland/Mol_phylo/revision/mast_hiv/generated/0.1/tree_subsets/modeltrees_final_19.newick
+Type of analysis: tree reconstruction
+Random seed number: 364455
+
+REFERENCES
+----------
+
+To cite IQ-TREE 3 please use:
+
+Thomas K.F. Wong, Nhan Ly-Trong, Huaiyan Ren, Hector Banos, Andrew J. Roger,
+Edward Susko, Chris Bielow, Nicola De Maio, Nick Goldman, Matthew W. Hahn,
+Gavin Huttley, Robert Lanfear, Bui Quang Minh (2025)
+IQ-TREE 3: Phylogenomic Inference Software using Complex Evolutionary Models.
+Submitted.
+
+Since you used the MAST model "+T" please also cite: 
+
+Thomas KF Wong, Caitlin Cherryh, Allen G Rodrigo, Matthew W Hahn,
+Bui Quang Minh, Robert Lanfear (2024)
+MAST: Phylogenetic Inference with Mixtures Across Sites and Trees.
+Systematic Biology, 73:375–391.
+https://doi.org/10.1093/sysbio/syae008
+
+SEQUENCE ALIGNMENT
+------------------
+
+NOTE: Alignment sequence type is auto-detected. If in doubt, specify it via -st option.
+Input data: 37 sequences with 9546 nucleotide sites
+Number of constant sites: 5208 (= 54.5569% of all sites)
+Number of invariant (constant or ambiguous constant) sites: 5208 (= 54.5569% of all sites)
+Number of parsimony informative sites: 3178
+Number of distinct site patterns: 3820
+
+SUBSTITUTION PROCESS
+--------------------
+
+Linked Model of substitution: GTR+FO+R4
+
+Rate parameter R:
+
+  A-C: 1.8518
+  A-G: 4.9213
+  A-T: 0.8575
+  C-G: 0.6352
+  C-T: 5.9181
+  G-T: 1.0000
+
+State frequencies: (estimated with maximum likelihood)
+
+  pi(A) = 0.3917
+  pi(C) = 0.1736
+  pi(G) = 0.2207
+  pi(T) = 0.214
+
+Rate matrix Q:
+
+  A   -0.8697    0.1757    0.5937    0.1003
+  C    0.3965    -1.165   0.07663    0.6923
+  G     1.054   0.06028    -1.231     0.117
+  T    0.1836    0.5617    0.1206   -0.8659
+
+Tree weights: 0.06096, 0.08765, 0.05649, 0.04135, 0.01766, 0.05068, 0.0534, 0.03976, 0.05065, 0.07875, 0.05235, 0.1109, 0.05766, 0.05163, 0.0281, 0.04266, 0.04449, 0.02883, 0.04602
+
+Linked Model of rate heterogeneity: FreeRate with 4 categories
+Site proportion and rates:  (0.443,0.001) (0.2633,0.2052) (0.239,0.9566) (0.05471,2.386)
+
+ Category  Relative_rate  Proportion
+  1         0.001          0.443
+  2         0.2052         0.2633
+  3         0.9566         0.239
+  4         2.386          0.05471
+
+USER TREE
+---------
+
+Log-likelihood of the tree: -85077.8114 (s.e. 977.2403)
+Unconstrained log-likelihood (without tree): -52273.5888
+Number of free parameters (#branches + #model parameters): 1381
+Akaike information criterion (AIC) score: 172917.6228
+Corrected Akaike information criterion (AICc) score: 173385.1736
+Bayesian information criterion (BIC) score: 182810.9377
+
+Total tree lengths (sum of branch lengths): 3.4453 0.9480 1.8868 7.3388 2.7243 2.3408 1.8212 3.4261 1.8043 10.6101 1.8071 2.2694 2.5049 3.9919 2.7618 3.7277 1.8916 3.9267 1.7889
+Sum of internal branch lengths: 1.1407 (33.1100% of tree length) 0.2108 (22.2380% of tree length) 0.5750 (30.4762% of tree length) 1.6080 (21.9108% of tree length) 0.9402 (34.5122% of tree length) 0.4536 (19.3794% of tree length) 0.5046 (27.7078% of tree length) 0.8978 (26.2045% of tree length) 0.4858 (26.9243% of tree length) 0.1451 (1.3680% of tree length) 0.6837 (37.8314% of tree length) 0.7534 (33.1983% of tree length) 0.7190 (28.7029% of tree length) 1.2187 (30.5289% of tree length) 1.2136 (43.9428% of tree length) 0.9996 (26.8148% of tree length) 0.6197 (32.7586% of tree length) 1.4657 (37.3255% of tree length) 0.5646 (31.5582% of tree length)
+
+Trees with branch lengths are provided in the file: /Users/gzd130/Library/CloudStorage/OneDrive-RegionSjælland/Mol_phylo/revision/mast_hiv/output/0.1/mast_model_19/mast_model_final_19.treefile
+
+TIME STAMP
+----------
+
+Date and time: Thu Jan 22 16:23:51 2026
+Total CPU time used: 6874 seconds (1h:54m:33s)
+Total wall-clock time used: 5430 seconds (1h:30m:29s)
+

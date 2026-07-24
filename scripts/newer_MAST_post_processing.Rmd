@@ -54,12 +54,24 @@ options(ggplot2.continuous.colour = scales::seq_gradient_pal(low = "white", high
 
 ## BIC vs. number of trees
 
-Trees in order of falling weight: 30 8 31 10 2 21 6 9 4 24 14 29 16 26 19 32 20 13 1 23 25 7 12 35 28 33 27 5 17 11 18 22 3 34 15
-
+Trees in order of falling weight:
+0.5 threshold: 30 8 31 10 2 21 6 9 4 24 14 29 16 26 19 32 20 13 1 23 25 7 12 35 28 33 27 5 17 11 18 22 3 34 15
 Best model has 6 trees - trees: 30 8 31 10 2 21
 
+0.9 threshold: 5 33 25 17 24  9 22  2 15  4 32 35 10
+Best model has 4 trees: 5 33 25 17
+
+0.1 threshold: 28 22 27 13 9 8 16 23 7 26
+Best model has 3 trees: 28 22 27 
+
+set threshold
 ```{r}
-BIC_table <- read.csv("../output/bic_values.csv", header = TRUE)
+threshold <- 0.1
+```
+
+
+```{r}
+BIC_table <- read.csv(paste0("../output/", threshold, "/bic_values.csv"), header = TRUE)
 
 BIC_table <- BIC_table %>% mutate("BIC_transformed" = value/10000)
 
@@ -82,7 +94,7 @@ ggsave("../figures/BIC_plot.png", plot = bic_plot, device = "png", width = 90, h
 Robinson-Foulds
 
 ```{r}
-path_to_trees <- "../output/mast_model_6/mast_model_final_6.treefile"
+path_to_trees <- "../output/0.1/mast_model_6/mast_model_final_6.treefile"
 trees <- read.tree(path_to_trees)
 ```
 
@@ -91,7 +103,9 @@ pair_dist <- MutualClusteringInfo(trees)
 mds_trees <-  cmdscale(as.dist(pair_dist))
 
 plot(mds_trees)
-tree_nrs <- c(30,8,31,10,2,21)
+#tree_nrs <- c(30,8,31,10,2,21)
+#tree_nrs <- c(5, 33, 25, 17, 24)
+tree_nrs <- c(28, 22, 27, 13, 9, 8)
 
 mds_trees[,1]
 mds_df <- data.frame(x = mds_trees[,1], y=mds_trees[,2], 'tree_nr' = as.character(tree_nrs))
@@ -107,7 +121,7 @@ tree_dist_plot
 
 save plot 
 ```{r}
-ggsave("../figures/tree_distances_6.png", plot = tree_dist_plot, device = "png", width = 85, height = 55, units = "mm", dpi = 400, bg = "white")
+#ggsave("../figures/tree_distances_6.png", plot = tree_dist_plot, device = "png", width = 85, height = 55, units = "mm", dpi = 400, bg = "white")
 ```
 
 
@@ -125,7 +139,7 @@ All SCFs are calculated with the script iqtree_scf.sh before this visualization
 Loading trees. Rooting, ladderizing.. 
 ```{r}
 
-tree10_scf <- read.tree("../output/scf/scf_tree_10.cf.tree")
+tree10_scf <- read.tree("../output/0.5_output/scf/scf_tree_10.cf.tree")
 tree10_scf[["node.label"]]
 #splitting the node labels as these contain both bootstrap and scf values:
 vals <- do.call(rbind, strsplit(tree10_scf$node.label, "/"))
@@ -414,8 +428,9 @@ rm(hiv_contrib_tab_10_30, hiv_contrib_tab_10_21, hiv_contrib_tab_21_30, hiv_cont
 ## gappy-ness of alignment 
 
 ```{r}
+threshold = 0.9
 
-aln <- readDNAMultipleAlignment("../data/2708_trimmed_alns_HIV_2021_subset.fasta")
+aln <- readDNAMultipleAlignment(paste0("../data/", threshold, "_trimmed_alns_HIV_2021_subset.fasta"))
 aln_mat <- as.matrix(aln)
 
 nseq <- nrow(aln_mat)
@@ -451,7 +466,9 @@ gapprop_plot
 ## Entropy of alignment
 
 ```{r}
-dna <- read.dna("../data/2708_trimmed_alns_HIV_2021_subset.fasta", format = "fasta")
+threshold = 0.9
+
+dna <- read.dna(paste0("../data/", threshold, "_trimmed_alns_HIV_2021_subset.fasta"), format = "fasta")
 M <- as.character(dna)
 
 site_entropy <- function(M, gaps = c("-", "N", "n"), base = 2) {
@@ -500,7 +517,7 @@ comb_plot
 
 
 ```{r}
-ggsave("../figures/gappy_entropy.png", comb_plot, device = 'png', width = 190, height = 70, units = 'mm', dpi = 300, bg = 'white')
+ggsave("../figures/0.9_gappy_entropy.png", comb_plot, device = 'png', width = 190, height = 70, units = 'mm', dpi = 300, bg = 'white')
 ```
 
 ```{r}
@@ -682,7 +699,7 @@ write.csv(trimmed_siteprob, file = "../output/trimmed_siteprob_w_modal_classes.t
 ```
 
 
-### Site likelihood
+### Site likelihood - we DO use these 
 
 Loading the site likelihood matrix 
 ```{r}

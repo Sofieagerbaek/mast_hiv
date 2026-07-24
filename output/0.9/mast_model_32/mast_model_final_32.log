@@ -1,0 +1,213 @@
+IQ-TREE version 3.0.1 for MacOS ARM 64-bit built Jun 30 2025
+Developed by Bui Quang Minh, Thomas Wong, Nhan Ly-Trong, Huaiyan Ren
+Contributed by Lam-Tung Nguyen, Dominik Schrempf, Chris Bielow,
+Olga Chernomor, Michael Woodhams, Diep Thi Hoang, Heiko Schmidt
+
+Host:    SUN1032320 (SSE4.2, 36 GB RAM)
+Command: iqtree3 -s /Users/gzd130/Library/CloudStorage/OneDrive-RegionSjælland/Mol_phylo/revision/mast_hiv/data/0.9_trimmed_alns_HIV_2021_subset.fasta -m GTR+FO+R4+T -te /Users/gzd130/Library/CloudStorage/OneDrive-RegionSjælland/Mol_phylo/revision/mast_hiv/generated/0.9/tree_subsets/modeltrees_final_32.newick --prefix /Users/gzd130/Library/CloudStorage/OneDrive-RegionSjælland/Mol_phylo/revision/mast_hiv/output/0.9/mast_model_32/mast_model_final_32 -nt 2 -wspmr -wslmr -redo
+Seed:    157612 (Using SPRNG - Scalable Parallel Random Number Generator)
+Time:    Tue Jan 20 11:26:59 2026
+Kernel:  SSE2 - 2 threads (14 CPU cores detected)
+
+Reading alignment file /Users/gzd130/Library/CloudStorage/OneDrive-RegionSjælland/Mol_phylo/revision/mast_hiv/data/0.9_trimmed_alns_HIV_2021_subset.fasta ... Fasta format detected
+Reading fasta file: done in 0.00561595 secs using 65.96% CPU
+Alignment most likely contains DNA/RNA sequences
+Constructing alignment: done in 0.0122981 secs using 33.44% CPU
+Alignment has 37 sequences with 8546 columns, 3226 distinct patterns
+2923 parsimony-informative, 1002 singleton sites, 4621 constant sites
+                                Gap/Ambiguity  Composition  p-value
+Analyzing sequences: done in 0.000569105 secs using 75.73% CPU
+   1  B.FR.83.HXBLAI_IIIB_BRU.K03455    0.14%    passed     41.06%
+   2  A                                 0.00%    passed     94.98%
+   3  A1                                0.00%    passed     88.46%
+   4  A2                                0.14%    passed     99.67%
+   5  A3                                0.23%    passed     49.63%
+   6  A6                                0.01%    passed     65.16%
+   7  B                                 0.02%    passed     87.39%
+   8  C                                 0.06%    passed     99.77%
+   9  D                                 0.09%    passed     94.13%
+  10  F1                                0.04%    passed     74.84%
+  11  F2                                0.11%    passed     93.22%
+  12  G                                 0.00%    passed     92.53%
+  13  H                                 0.11%    passed     95.93%
+  14  J                                 0.06%    passed     85.14%
+  15  K                                 0.70%    passed     61.15%
+  16  L                                 0.41%    passed     93.51%
+  17  AE                                0.01%    passed     86.94%
+  18  AG                                0.00%    passed     86.00%
+  19  cpx                               0.16%    passed     88.19%
+  20  DF                                0.05%    passed     86.17%
+  21  BC                                0.09%    passed     96.11%
+  22  CD                                0.06%    passed     99.76%
+  23  BF                                0.04%    passed     48.59%
+  24  BG                                0.23%    passed     92.78%
+  25  01B                               0.07%    passed     93.30%
+  26  A2D                               0.08%    passed     63.20%
+  27  01A1                              0.07%    passed     67.81%
+  28  A5U                               0.19%    passed     72.25%
+  29  AD                                0.04%    passed     80.72%
+  30  BF1                               0.06%    passed     92.44%
+  31  02G                               0.05%    passed     99.53%
+  32  A1D                               0.04%    passed     87.37%
+  33  02A                               0.06%    passed     36.05%
+  34  C2U                               0.04%    passed     98.27%
+  35  02B                               0.46%    passed     90.31%
+  36  01C                               0.08%    passed     97.19%
+  37  CPZ                               1.10%    failed      0.00%
+****  TOTAL                             0.14%  1 sequences failed composition chi2 test (p-value<5%; df=3)
+Number of input trees: 32
+Minimum branch length is set to 0.0000010
+Checking for duplicate sequences: done in 0.00031805 secs using 93.7% CPU
+
+NOTE: 496 MB RAM (0 GB) is required!
+According to the parsimony scores along the sites, the tree weights are initialized to:
+0.0218764,0.0390378,0.0331246,0.0282131,0.0340379,0.0250051,0.0301019,0.0365791,0.0316287,0.0270700,0.0387452,0.0346776,0.0355509,0.0280643,0.0219806,0.0299195,0.0348967,0.0317040,0.0311689,0.0345303,0.0287971,0.0327325,0.0406364,0.0320389,0.0318039,0.0306418,0.0297439,0.0294315,0.0355342,0.0234628,0.0335782,0.0236862
+Estimate model parameters (epsilon = 0.00100)
+1. Initial log-likelihood: -84653.67449
+2. Current log-likelihood: -77024.10324
+3. Current log-likelihood: -76973.30832
+4. Current log-likelihood: -76947.21098
+5. Current log-likelihood: -76925.30875
+6. Current log-likelihood: -76915.17394
+7. Current log-likelihood: -76906.59176
+8. Current log-likelihood: -76900.10245
+9. Current log-likelihood: -76898.97318
+10. Current log-likelihood: -76898.02157
+11. Current log-likelihood: -76897.20851
+12. Current log-likelihood: -76896.44461
+13. Current log-likelihood: -76895.83557
+14. Current log-likelihood: -76895.30309
+15. Current log-likelihood: -76894.83509
+16. Current log-likelihood: -76894.42148
+17. Current log-likelihood: -76887.82737
+18. Current log-likelihood: -76887.36940
+19. Current log-likelihood: -76887.05144
+20. Current log-likelihood: -76886.76649
+21. Current log-likelihood: -76886.50662
+22. Current log-likelihood: -76886.26744
+23. Current log-likelihood: -76886.04620
+24. Current log-likelihood: -76885.84044
+25. Current log-likelihood: -76885.64804
+26. Current log-likelihood: -76885.46706
+27. Current log-likelihood: -76885.29339
+28. Current log-likelihood: -76885.12404
+29. Current log-likelihood: -76884.67455
+30. Current log-likelihood: -76884.44382
+31. Current log-likelihood: -76884.25876
+32. Current log-likelihood: -76884.08484
+33. Current log-likelihood: -76883.91995
+34. Current log-likelihood: -76883.76634
+35. Current log-likelihood: -76883.62374
+36. Current log-likelihood: -76883.48347
+37. Current log-likelihood: -76883.35643
+38. Current log-likelihood: -76883.23348
+39. Current log-likelihood: -76883.11956
+40. Current log-likelihood: -76883.00876
+41. Current log-likelihood: -76882.90637
+42. Current log-likelihood: -76882.80207
+43. Current log-likelihood: -76882.65507
+44. Current log-likelihood: -76882.56617
+45. Current log-likelihood: -76882.47699
+46. Current log-likelihood: -76882.39760
+47. Current log-likelihood: -76882.31932
+48. Current log-likelihood: -76882.07471
+49. Current log-likelihood: -76882.00038
+50. Current log-likelihood: -76881.92285
+51. Current log-likelihood: -76881.85316
+52. Current log-likelihood: -76881.77750
+53. Current log-likelihood: -76881.57180
+54. Current log-likelihood: -76881.48582
+55. Current log-likelihood: -76881.39212
+56. Current log-likelihood: -76881.29577
+57. Current log-likelihood: -76880.90266
+58. Current log-likelihood: -76880.77321
+59. Current log-likelihood: -76880.63927
+60. Current log-likelihood: -76880.52374
+61. Current log-likelihood: -76880.39979
+62. Current log-likelihood: -76880.29711
+63. Current log-likelihood: -76880.16771
+64. Current log-likelihood: -76880.07333
+65. Current log-likelihood: -76879.98115
+66. Current log-likelihood: -76879.89353
+67. Current log-likelihood: -76879.81568
+68. Current log-likelihood: -76879.73078
+69. Current log-likelihood: -76879.65840
+70. Current log-likelihood: -76879.59519
+71. Current log-likelihood: -76879.53658
+72. Current log-likelihood: -76879.49087
+73. Current log-likelihood: -76879.43608
+74. Current log-likelihood: -76879.39271
+75. Current log-likelihood: -76879.35913
+76. Current log-likelihood: -76879.32888
+77. Current log-likelihood: -76879.30146
+78. Current log-likelihood: -76879.27712
+79. Current log-likelihood: -76879.24907
+80. Current log-likelihood: -76879.22916
+81. Current log-likelihood: -76879.20892
+82. Current log-likelihood: -76879.19213
+83. Current log-likelihood: -76879.17666
+84. Current log-likelihood: -76879.16351
+85. Current log-likelihood: -76879.14691
+86. Current log-likelihood: -76879.13660
+87. Current log-likelihood: -76879.11992
+88. Current log-likelihood: -76879.11068
+89. Current log-likelihood: -76879.10020
+90. Current log-likelihood: -76879.09247
+91. Current log-likelihood: -76879.08349
+92. Current log-likelihood: -76879.07684
+93. Current log-likelihood: -76879.06919
+94. Current log-likelihood: -76879.06338
+95. Current log-likelihood: -76879.05409
+96. Current log-likelihood: -76879.04881
+97. Current log-likelihood: -76879.04394
+98. Current log-likelihood: -76879.03822
+99. Current log-likelihood: -76879.03393
+100. Current log-likelihood: -76879.02853
+101. Current log-likelihood: -76879.02467
+102. Current log-likelihood: -76879.01871
+103. Current log-likelihood: -76879.00831
+104. Current log-likelihood: -76879.00349
+105. Current log-likelihood: -76878.99708
+106. Current log-likelihood: -76878.99321
+107. Current log-likelihood: -76878.98751
+108. Current log-likelihood: -76878.98424
+109. Current log-likelihood: -76878.97870
+110. Current log-likelihood: -76878.97466
+111. Current log-likelihood: -76878.96714
+112. Current log-likelihood: -76878.96475
+113. Current log-likelihood: -76878.96063
+114. Current log-likelihood: -76878.95862
+115. Current log-likelihood: -76878.95676
+116. Current log-likelihood: -76878.95500
+117. Current log-likelihood: -76878.95342
+118. Current log-likelihood: -76878.95197
+119. Current log-likelihood: -76878.94491
+120. Current log-likelihood: -76878.94352
+121. Current log-likelihood: -76878.94228
+122. Current log-likelihood: -76878.94098
+123. Current log-likelihood: -76878.93984
+124. Current log-likelihood: -76878.93859
+125. Current log-likelihood: -76878.93750
+126. Current log-likelihood: -76878.93655
+Final estimation on weights:
+0.07418,0.07374,0.05860,0.01527,0.03771,0.02754,0.02881,0.03503,0.03713,0.02734,0.02929,0.02888,0.03142,0.03407,0.03095,0.02002,0.03734,0.02543,0.02952,0.02044,0.02715,0.03269,0.02978,0.02575,0.02802,0.02638,0.02186,0.01827,0.03138,0.01714,0.02429,0.01457
+Wrote distance file to... 
+BEST SCORE FOUND : -76878.93655
+Site log-likelihoods per category printed to /Users/gzd130/Library/CloudStorage/OneDrive-RegionSjælland/Mol_phylo/revision/mast_hiv/output/0.9/mast_model_32/mast_model_final_32.sitelh
+Site probabilities per category printed to /Users/gzd130/Library/CloudStorage/OneDrive-RegionSjælland/Mol_phylo/revision/mast_hiv/output/0.9/mast_model_32/mast_model_final_32.siteprob
+Total tree lengths: 2.12236 1.42041 10.85327 3.03733 2.62961 1.85286 11.47167 1.73741 10.10618 2.41676 4.73004 2.05099 2.39236 1.88029 1.20749 3.43180 1.51805 1.87097 2.12810 2.00220 2.57133 2.28977 1.51519 5.26277 1.82868 2.29170 2.20412 2.47839 3.53838 2.80092 2.42361 1.66373
+
+Total number of iterations: 124
+CPU time used for tree search: 0.00003 sec (0h:0m:0s)
+Wall-clock time used for tree search: 0.00005 sec (0h:0m:0s)
+Total CPU time used: 9864.04917 sec (2h:44m:24s)
+Total wall-clock time used: 11500.64806 sec (3h:11m:40s)
+
+Analysis results written to: 
+  IQ-TREE report:                /Users/gzd130/Library/CloudStorage/OneDrive-RegionSjælland/Mol_phylo/revision/mast_hiv/output/0.9/mast_model_32/mast_model_final_32.iqtree
+  Maximum-likelihood tree:       /Users/gzd130/Library/CloudStorage/OneDrive-RegionSjælland/Mol_phylo/revision/mast_hiv/output/0.9/mast_model_32/mast_model_final_32.treefile
+  Site log-likelihoods:          /Users/gzd130/Library/CloudStorage/OneDrive-RegionSjælland/Mol_phylo/revision/mast_hiv/output/0.9/mast_model_32/mast_model_final_32.sitelh
+  Site probability per rate/mix: /Users/gzd130/Library/CloudStorage/OneDrive-RegionSjælland/Mol_phylo/revision/mast_hiv/output/0.9/mast_model_32/mast_model_final_32.siteprob
+  Screen log file:               /Users/gzd130/Library/CloudStorage/OneDrive-RegionSjælland/Mol_phylo/revision/mast_hiv/output/0.9/mast_model_32/mast_model_final_32.log
+
+Date and Time: Tue Jan 20 14:38:39 2026

@@ -1,0 +1,88 @@
+IQ-TREE 2.3.6 built Aug  1 2024
+
+Input file name: /maps/projects/racimolab/people/fnl270/GitHub/mast_hiv/data/18_ML_trees/2708_trimmed_alns_HIV_2021_subset.fasta
+User tree file name: /maps/projects/racimolab/people/fnl270/GitHub/mast_hiv/data/tree_subsets/modeltrees_18.newick
+Type of analysis: tree reconstruction
+Random seed number: 791728
+
+REFERENCES
+----------
+
+To cite IQ-TREE please use:
+
+Bui Quang Minh, Heiko A. Schmidt, Olga Chernomor, Dominik Schrempf,
+Michael D. Woodhams, Arndt von Haeseler, and Robert Lanfear (2020)
+IQ-TREE 2: New models and efficient methods for phylogenetic inference
+in the genomic era. Mol. Biol. Evol., in press.
+https://doi.org/10.1093/molbev/msaa015
+
+SEQUENCE ALIGNMENT
+------------------
+
+Input data: 37 sequences with 8941 nucleotide sites
+Number of constant sites: 4798 (= 53.6629% of all sites)
+Number of invariant (constant or ambiguous constant) sites: 4798 (= 53.6629% of all sites)
+Number of parsimony informative sites: 3080
+Number of distinct site patterns: 3524
+
+SUBSTITUTION PROCESS
+--------------------
+
+Linked Model of substitution: GTR+FO+R4
+
+Rate parameter R:
+
+  A-C: 1.9053
+  A-G: 4.9801
+  A-T: 0.8072
+  C-G: 0.6709
+  C-T: 6.1373
+  G-T: 1.0000
+
+State frequencies: (estimated with maximum likelihood)
+
+  pi(A) = 0.3977
+  pi(C) = 0.1697
+  pi(G) = 0.2181
+  pi(T) = 0.2145
+
+Rate matrix Q:
+
+  A   -0.8561    0.1749    0.5875   0.09366
+  C    0.4098    -1.201   0.07915    0.7121
+  G     1.071   0.06157    -1.249     0.116
+  T    0.1736    0.5632     0.118   -0.8548
+
+Tree weights: 0.09086, 0.08388, 0.03875, 0.07933, 0.03729, 0.05492, 0.05514, 0.04627, 0.06877, 0.04387, 0.04511, 0.07204, 0.06762, 0.04009, 0.03878, 0.05089, 0.05637, 0.03002
+
+Linked Model of rate heterogeneity: FreeRate with 4 categories
+Site proportion and rates:  (0.407,0.001) (0.2098,0.1493) (0.2522,0.8558) (0.131,2.386)
+
+ Category  Relative_rate  Proportion
+  1         0.001          0.407
+  2         0.1493         0.2098
+  3         0.8558         0.2522
+  4         2.386          0.131
+
+USER TREE
+---------
+
+Log-likelihood of the tree: -82567.8669 (s.e. 966.1109)
+Unconstrained log-likelihood (without tree): -47054.3803
+Number of free parameters (#branches + #model parameters): 1309
+Akaike information criterion (AIC) score: 167753.7338
+Corrected Akaike information criterion (AICc) score: 168203.1611
+Bayesian information criterion (BIC) score: 177045.5430
+
+Total tree lengths (sum of branch lengths): 2.0772 10.8123 3.3644 1.6496 2.2964 3.6085 1.2483 2.2256 1.3372 2.7288 2.9624 3.3865 1.5746 2.2527 2.3927 3.1910 1.3269 9.0159
+Sum of internal branch lengths: 0.5116 (24.6287% of tree length) 0.2139 (1.9782% of tree length) 0.8216 (24.4207% of tree length) 0.5625 (34.1011% of tree length) 0.9234 (40.2095% of tree length) 1.3497 (37.4023% of tree length) 0.2891 (23.1577% of tree length) 0.6827 (30.6754% of tree length) 0.3549 (26.5395% of tree length) 0.7874 (28.8543% of tree length) 0.9677 (32.6661% of tree length) 1.0213 (30.1576% of tree length) 0.3763 (23.8952% of tree length) 0.4912 (21.8046% of tree length) 0.8812 (36.8286% of tree length) 0.9156 (28.6934% of tree length) 0.4030 (30.3693% of tree length) 1.6448 (18.2437% of tree length)
+
+Trees with branch lengths are provided in the file: /maps/projects/racimolab/people/fnl270/GitHub/mast_hiv/output/mast_model_18/mast_model_18.treefile
+
+TIME STAMP
+----------
+
+Date and time: Mon Sep  8 01:08:39 2025
+Total CPU time used: 6075 seconds (1h:41m:15s)
+Total wall-clock time used: 3159 seconds (0h:52m:38s)
+

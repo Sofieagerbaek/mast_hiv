@@ -7,12 +7,12 @@ library(reshape2)
 library(viridis)
 
 # Load trees
-ml18 <- read.tree("data/18_ML_trees/all_18_trimmed_ML_trees.newick")
-ml17 <- read.tree("data/17_ML_trees/17_shifted_windows_trimmed_ML_trees.newick")
+ml18 <- read.tree("../generated/0.1/18_ML_trees/all_18_trimmed_ML_trees.newick")
+ml17 <- read.tree("../generated/0.1/17_ML_trees/17_shifted_windows_trimmed_ML_trees.newick")
 
 # Calculate distances
 rf_distm <- matrix(NA, 18, 17)
-for(i in 1:18) for(j in 1:17) rf_distm[i, j] <- RF.dist(ml18[[i]], ml17[[j]], normalize = T)
+for(i in 2:18) for(j in 2:17) rf_distm[i, j] <- RF.dist(ml18[[i]], ml17[[j]], normalize = T)
 
 # Plot
 rf_dist <- melt(rf_distm)
@@ -50,7 +50,7 @@ rf_shift <- ggplot(data = rf_dist, mapping = aes(y = RFscore_norm, x = abs_shift
   theme(legend.position = "bottom") 
 
 p <- patchwork::wrap_plots(list(rf_heatmap, rf_shift, rf_density))
-
+p
 # Save PDF coz the ggsave can't handle character spacing properly
 savePDF <- function (p, file, width, height, ...) {
   grDevices::pdf(file = file, width = width, height = height, ...)
@@ -59,4 +59,4 @@ savePDF <- function (p, file, width, height, ...) {
   invisible(grDevices::dev.off())
 }
 
-savePDF(p, here("figures/ml_tree_compar.pdf"), width = 10, height = 5)
+savePDF(p, here("figures/0.1_ml_tree_compar.pdf"), width = 10, height = 5)

@@ -4,7 +4,7 @@ library(dplyr)
 library(magrittr)
 library(ggplot2)
 
-OUT <- here("output")
+OUT <- here("output/0.1")
 aic <- numeric(35L)
 aicc <- numeric(35L)
 bic <- numeric(35L)
@@ -27,7 +27,7 @@ p <- ggplot(ic, aes(x = n, y = value, colour = estimator)) +
         theme_bw() +
         xlab("Number of trees") +
         ggtitle("Model fit")
-
+p
 # Save PDF coz ggsave can't handle character spacing properly
 savePDF <- function (p, file, width, height, ...) {
   grDevices::pdf(file = file, width = width, height = height, ...)
@@ -36,4 +36,5 @@ savePDF <- function (p, file, width, height, ...) {
   invisible(grDevices::dev.off())
 }
 
-savePDF(p, here("figures/ic.pdf"), width = 5, height = 4)
+savePDF(p, here("figures/0.1_ic.pdf"), width = 5, height = 4)
+write_csv(bic, "../output/0.1/bic_values.csv")

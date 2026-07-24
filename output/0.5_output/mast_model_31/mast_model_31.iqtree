@@ -1,0 +1,88 @@
+IQ-TREE 2.3.6 built Aug  1 2024
+
+Input file name: /maps/projects/racimolab/people/fnl270/GitHub/mast_hiv/data/18_ML_trees/2708_trimmed_alns_HIV_2021_subset.fasta
+User tree file name: /maps/projects/racimolab/people/fnl270/GitHub/mast_hiv/data/tree_subsets/modeltrees_31.newick
+Type of analysis: tree reconstruction
+Random seed number: 739858
+
+REFERENCES
+----------
+
+To cite IQ-TREE please use:
+
+Bui Quang Minh, Heiko A. Schmidt, Olga Chernomor, Dominik Schrempf,
+Michael D. Woodhams, Arndt von Haeseler, and Robert Lanfear (2020)
+IQ-TREE 2: New models and efficient methods for phylogenetic inference
+in the genomic era. Mol. Biol. Evol., in press.
+https://doi.org/10.1093/molbev/msaa015
+
+SEQUENCE ALIGNMENT
+------------------
+
+Input data: 37 sequences with 8941 nucleotide sites
+Number of constant sites: 4798 (= 53.6629% of all sites)
+Number of invariant (constant or ambiguous constant) sites: 4798 (= 53.6629% of all sites)
+Number of parsimony informative sites: 3080
+Number of distinct site patterns: 3524
+
+SUBSTITUTION PROCESS
+--------------------
+
+Linked Model of substitution: GTR+FO+R4
+
+Rate parameter R:
+
+  A-C: 1.8681
+  A-G: 4.9131
+  A-T: 0.7637
+  C-G: 0.5987
+  C-T: 6.0655
+  G-T: 1.0000
+
+State frequencies: (estimated with maximum likelihood)
+
+  pi(A) = 0.3988
+  pi(C) = 0.1696
+  pi(G) = 0.218
+  pi(T) = 0.2137
+
+Rate matrix Q:
+
+  A   -0.8551    0.1746    0.5905   0.08995
+  C    0.4107    -1.197   0.07196    0.7144
+  G      1.08   0.05598    -1.254    0.1178
+  T    0.1679    0.5671    0.1202   -0.8551
+
+Tree weights: 0.04984, 0.06144, 0.03199, 0.03645, 0.06231, 0.04031, 0.03907, 0.02163, 0.0409, 0.04188, 0.03325, 0.03004, 0.03796, 0.02633, 0.02445, 0.03388, 0.02557, 0.02478, 0.02454, 0.01682, 0.03115, 0.02861, 0.02718, 0.02368, 0.02858, 0.04185, 0.03262, 0.03646, 0.009151, 0.02032, 0.01695
+
+Linked Model of rate heterogeneity: FreeRate with 4 categories
+Site proportion and rates:  (0.4839,0.006317) (0.2214,0.3797) (0.1842,1.076) (0.1105,2.386)
+
+ Category  Relative_rate  Proportion
+  1         0.006317       0.4839
+  2         0.3797         0.2214
+  3         1.076          0.1842
+  4         2.386          0.1105
+
+USER TREE
+---------
+
+Log-likelihood of the tree: -81375.4648 (s.e. 943.0087)
+Unconstrained log-likelihood (without tree): -47054.3803
+Number of free parameters (#branches + #model parameters): 2245
+Akaike information criterion (AIC) score: 167240.9296
+Corrected Akaike information criterion (AICc) score: 168747.2089
+Bayesian information criterion (BIC) score: 183176.8437
+
+Total tree lengths (sum of branch lengths): 2.6255 8.3455 2.9668 2.3038 0.8969 2.4266 1.1257 1.4721 1.3008 1.5835 3.4858 3.8385 1.9153 7.5432 2.4284 3.4854 1.6968 13.3644 1.7116 3.2359 2.0916 1.9352 3.0423 2.3188 1.7674 1.2789 2.3689 1.8209 4.0094 2.7625 3.0143
+Sum of internal branch lengths: 0.7145 (27.2128% of tree length) 0.1447 (1.7343% of tree length) 0.7430 (25.0450% of tree length) 0.8287 (35.9725% of tree length) 0.1981 (22.0831% of tree length) 0.8253 (34.0110% of tree length) 0.2121 (18.8409% of tree length) 0.3967 (26.9468% of tree length) 0.3709 (28.5155% of tree length) 0.3726 (23.5276% of tree length) 1.1167 (32.0344% of tree length) 1.3345 (34.7670% of tree length) 0.6142 (32.0658% of tree length) 0.1443 (1.9132% of tree length) 0.6585 (27.1164% of tree length) 1.1522 (33.0565% of tree length) 0.7309 (43.0781% of tree length) 1.7639 (13.1986% of tree length) 0.5151 (30.0965% of tree length) 0.9860 (30.4705% of tree length) 0.7584 (36.2611% of tree length) 0.6665 (34.4410% of tree length) 1.0772 (35.4084% of tree length) 0.7628 (32.8974% of tree length) 0.5845 (33.0718% of tree length) 0.4288 (33.5274% of tree length) 0.7565 (31.9327% of tree length) 0.5732 (31.4804% of tree length) 0.7312 (18.2379% of tree length) 1.2341 (44.6717% of tree length) 1.2140 (40.2743% of tree length)
+
+Trees with branch lengths are provided in the file: /maps/projects/racimolab/people/fnl270/GitHub/mast_hiv/output/mast_model_31/mast_model_31.treefile
+
+TIME STAMP
+----------
+
+Date and time: Mon Sep  8 01:34:14 2025
+Total CPU time used: 8949 seconds (2h:29m:8s)
+Total wall-clock time used: 4677 seconds (1h:17m:57s)
+

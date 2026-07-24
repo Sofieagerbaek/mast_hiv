@@ -1,0 +1,235 @@
+IQ-TREE multicore version 2.3.6 for Linux x86 64-bit built Aug  1 2024
+Developed by Bui Quang Minh, Nguyen Lam Tung, Olga Chernomor, Heiko Schmidt,
+Dominik Schrempf, Michael Woodhams, Ly Trong Nhan, Thomas Wong
+
+Host:    racimocomp07fl.unicph.domain (AVX512, FMA3, 755 GB RAM)
+Command: iqtree2 -s /maps/projects/racimolab/people/fnl270/GitHub/mast_hiv/data/18_ML_trees/2708_trimmed_alns_HIV_2021_subset.fasta -m GTR+FO+R4+T -te /maps/projects/racimolab/people/fnl270/GitHub/mast_hiv/data/tree_subsets/modeltrees_final_28.newick --prefix /maps/projects/racimolab/people/fnl270/GitHub/mast_hiv/output/mast_model_28/mast_model_final_28 -nt 2 -wspmr -wslmr -redo
+Seed:    139615 (Using SPRNG - Scalable Parallel Random Number Generator)
+Time:    Mon Sep  8 09:24:35 2025
+Kernel:  AVX+FMA - 2 threads (96 CPU cores detected)
+
+Reading alignment file /maps/projects/racimolab/people/fnl270/GitHub/mast_hiv/data/18_ML_trees/2708_trimmed_alns_HIV_2021_subset.fasta ... Fasta format detected
+Reading fasta file: done in 0.00671241 secs using 79.61% CPU
+Alignment most likely contains DNA/RNA sequences
+Alignment has 37 sequences with 8941 columns, 3524 distinct patterns
+3080 parsimony-informative, 1063 singleton sites, 4798 constant sites
+                                Gap/Ambiguity  Composition  p-value
+Analyzing sequences: done in 0.0011211 secs using 186.7% CPU
+   1  B.FR.83.HXBLAI_IIIB_BRU.K03455    0.70%    passed     19.65%
+   2  A                                 0.15%    passed     89.42%
+   3  A1                                2.13%    passed     95.95%
+   4  A2                                0.48%    passed     99.90%
+   5  A3                                2.14%    passed     63.50%
+   6  A6                                0.74%    passed     55.87%
+   7  B                                 1.54%    passed     84.96%
+   8  C                                 0.82%    passed     99.85%
+   9  D                                 2.30%    passed     81.94%
+  10  F1                                1.63%    passed     79.98%
+  11  F2                                1.90%    passed     83.58%
+  12  G                                 0.72%    passed     96.00%
+  13  H                                 0.59%    passed     95.29%
+  14  J                                 0.74%    passed     82.00%
+  15  K                                 4.21%    passed     27.59%
+  16  L                                 1.02%    passed     93.46%
+  17  AE                                2.18%    passed     91.20%
+  18  AG                                2.76%    passed     96.74%
+  19  cpx                               0.65%    passed     75.48%
+  20  DF                                0.73%    passed     93.16%
+  21  BC                                1.01%    passed     89.00%
+  22  CD                                0.66%    passed     99.15%
+  23  BF                                0.85%    passed     34.38%
+  24  BG                                1.45%    passed     96.00%
+  25  01B                               1.67%    passed     91.56%
+  26  A2D                               2.02%    passed     53.74%
+  27  01A1                              2.65%    passed     55.15%
+  28  A5U                               0.46%    passed     76.20%
+  29  AD                                2.99%    passed     95.07%
+  30  BF1                               1.96%    passed     80.75%
+  31  02G                               1.21%    passed     98.74%
+  32  A1D                               0.89%    passed     82.33%
+  33  02A                               1.55%    passed     28.34%
+  34  C2U                               0.43%    passed     98.79%
+  35  02B                               3.53%    passed     98.05%
+  36  01C                               0.82%    passed     97.29%
+  37  CPZ                               1.97%    failed      0.00%
+****  TOTAL                             1.47%  1 sequences failed composition chi2 test (p-value<5%; df=3)
+Tree-mixture model
+Number of input trees: 28
+Minimum branch length is set to 0.0000010
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Linked substitution model:
+   GTR+FO
+
+Linked RHS model:
+   R4
+
+
+NOTE: 474 MB RAM (0 GB) is required!
+According to the parsimony scores along the sites, the tree weights are initialized to:
+0.0367354,0.0316636,0.0350056,0.0373567,0.0297739,0.0355272,0.0278538,0.0337860,0.0401155,0.0401932,0.0362346,0.0327962,0.0411636,0.0452049,0.0282845,0.0433045,0.0260610,0.0296057,0.0378449,0.0361365,0.0433103,0.0290488,0.0379853,0.0321313,0.0350757,0.0306267,0.0398593,0.0473154
+Estimate model parameters (epsilon = 0.00100)
+1. Initial log-likelihood: -89471.23983
+2. Current log-likelihood: -81680.09830
+3. Current log-likelihood: -81629.59045
+4. Current log-likelihood: -81609.45796
+5. Current log-likelihood: -81602.55860
+6. Current log-likelihood: -81597.48210
+7. Current log-likelihood: -81594.01447
+8. Current log-likelihood: -81590.87766
+9. Current log-likelihood: -81588.20017
+10. Current log-likelihood: -81586.32735
+11. Current log-likelihood: -81584.26616
+12. Current log-likelihood: -81582.96047
+13. Current log-likelihood: -81581.53136
+14. Current log-likelihood: -81580.14839
+15. Current log-likelihood: -81579.14029
+16. Current log-likelihood: -81578.29485
+17. Current log-likelihood: -81577.31442
+18. Current log-likelihood: -81572.99439
+19. Current log-likelihood: -81571.89856
+20. Current log-likelihood: -81571.08528
+21. Current log-likelihood: -81570.29106
+22. Current log-likelihood: -81569.35010
+23. Current log-likelihood: -81568.79417
+24. Current log-likelihood: -81568.25796
+25. Current log-likelihood: -81567.85962
+26. Current log-likelihood: -81567.52522
+27. Current log-likelihood: -81567.14636
+28. Current log-likelihood: -81566.85273
+29. Current log-likelihood: -81565.19334
+30. Current log-likelihood: -81563.85056
+31. Current log-likelihood: -81560.89084
+32. Current log-likelihood: -81559.89058
+33. Current log-likelihood: -81559.02509
+34. Current log-likelihood: -81558.23085
+35. Current log-likelihood: -81557.95118
+36. Current log-likelihood: -81557.73072
+37. Current log-likelihood: -81557.52495
+38. Current log-likelihood: -81557.37186
+39. Current log-likelihood: -81557.20512
+40. Current log-likelihood: -81557.06497
+41. Current log-likelihood: -81556.94079
+42. Current log-likelihood: -81556.84206
+43. Current log-likelihood: -81556.72799
+44. Current log-likelihood: -81556.49071
+45. Current log-likelihood: -81556.36876
+46. Current log-likelihood: -81556.30407
+47. Current log-likelihood: -81556.23395
+48. Current log-likelihood: -81556.17567
+49. Current log-likelihood: -81556.12216
+50. Current log-likelihood: -81555.52758
+51. Current log-likelihood: -81555.44289
+52. Current log-likelihood: -81555.36936
+53. Current log-likelihood: -81555.29996
+54. Current log-likelihood: -81555.23214
+55. Current log-likelihood: -81555.17012
+56. Current log-likelihood: -81555.11570
+57. Current log-likelihood: -81555.06554
+58. Current log-likelihood: -81555.01894
+59. Current log-likelihood: -81554.97500
+60. Current log-likelihood: -81554.93371
+61. Current log-likelihood: -81554.89471
+62. Current log-likelihood: -81554.85776
+63. Current log-likelihood: -81554.82435
+64. Current log-likelihood: -81554.79200
+65. Current log-likelihood: -81554.76155
+66. Current log-likelihood: -81554.73238
+67. Current log-likelihood: -81554.70436
+68. Current log-likelihood: -81554.67788
+69. Current log-likelihood: -81554.65261
+70. Current log-likelihood: -81554.62794
+71. Current log-likelihood: -81554.60470
+72. Current log-likelihood: -81554.57872
+73. Current log-likelihood: -81554.55035
+74. Current log-likelihood: -81554.53024
+75. Current log-likelihood: -81554.50954
+76. Current log-likelihood: -81554.49890
+77. Current log-likelihood: -81554.47477
+78. Current log-likelihood: -81554.46318
+79. Current log-likelihood: -81554.45642
+80. Current log-likelihood: -81554.44223
+81. Current log-likelihood: -81554.43165
+82. Current log-likelihood: -81554.42616
+83. Current log-likelihood: -81554.41668
+84. Current log-likelihood: -81554.41160
+85. Current log-likelihood: -81554.40254
+86. Current log-likelihood: -81554.38128
+87. Current log-likelihood: -81554.37408
+88. Current log-likelihood: -81554.37079
+89. Current log-likelihood: -81554.36655
+90. Current log-likelihood: -81554.36406
+91. Current log-likelihood: -81554.35588
+92. Current log-likelihood: -81554.35014
+93. Current log-likelihood: -81554.34803
+94. Current log-likelihood: -81554.34217
+95. Current log-likelihood: -81554.34020
+96. Current log-likelihood: -81554.33724
+97. Current log-likelihood: -81554.33509
+98. Current log-likelihood: -81554.33332
+99. Current log-likelihood: -81554.33144
+100. Current log-likelihood: -81554.32692
+101. Current log-likelihood: -81554.32529
+102. Current log-likelihood: -81554.32316
+103. Current log-likelihood: -81554.32003
+104. Current log-likelihood: -81554.31351
+105. Current log-likelihood: -81554.30744
+106. Current log-likelihood: -81554.30226
+107. Current log-likelihood: -81554.30060
+108. Current log-likelihood: -81554.29933
+109. Current log-likelihood: -81554.29602
+110. Current log-likelihood: -81554.29208
+111. Current log-likelihood: -81554.28974
+112. Current log-likelihood: -81554.28863
+113. Current log-likelihood: -81554.28629
+114. Current log-likelihood: -81554.28407
+115. Current log-likelihood: -81554.28330
+Final estimation on weights:
+0.03282,0.08217,0.06790,0.02901,0.06016,0.03139,0.04732,0.03317,0.03668,0.03719,0.03805,0.03743,0.04448,0.02911,0.03427,0.03404,0.03646,0.02432,0.03164,0.02452,0.03126,0.01782,0.02080,0.03087,0.02707,0.01547,0.03739,0.02719
+Wrote distance file to... 
+BEST SCORE FOUND : -81554.28330
+Site log-likelihoods per category printed to /maps/projects/racimolab/people/fnl270/GitHub/mast_hiv/output/mast_model_28/mast_model_final_28.sitelh
+Site probabilities per category printed to /maps/projects/racimolab/people/fnl270/GitHub/mast_hiv/output/mast_model_28/mast_model_final_28.siteprob
+Total tree lengths: 3.89941 6.39130 1.13802 2.56972 0.87159 1.84292 1.20787 1.77689 2.45739 3.43994 3.75231 1.81845 2.05598 3.74808 2.18668 1.24595 1.18841 1.65705 2.17281 12.80555 3.19541 3.17800 3.95652 2.06283 2.19940 3.65596 1.30021 2.52625
+
+Total number of iterations: 113
+CPU time used for tree search: 0.00007 sec (0h:0m:0s)
+Wall-clock time used for tree search: 0.00007 sec (0h:0m:0s)
+Total CPU time used: 25333.34158 sec (7h:2m:13s)
+Total wall-clock time used: 13371.03442 sec (3h:42m:51s)
+
+Analysis results written to: 
+  IQ-TREE report:                /maps/projects/racimolab/people/fnl270/GitHub/mast_hiv/output/mast_model_28/mast_model_final_28.iqtree
+  Maximum-likelihood tree:       /maps/projects/racimolab/people/fnl270/GitHub/mast_hiv/output/mast_model_28/mast_model_final_28.treefile
+  Site log-likelihoods:          /maps/projects/racimolab/people/fnl270/GitHub/mast_hiv/output/mast_model_28/mast_model_final_28.sitelh
+  Site probability per rate/mix: /maps/projects/racimolab/people/fnl270/GitHub/mast_hiv/output/mast_model_28/mast_model_final_28.siteprob
+  Screen log file:               /maps/projects/racimolab/people/fnl270/GitHub/mast_hiv/output/mast_model_28/mast_model_final_28.log
+
+Date and Time: Mon Sep  8 13:07:26 2025

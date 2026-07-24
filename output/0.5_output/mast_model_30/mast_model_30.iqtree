@@ -1,0 +1,88 @@
+IQ-TREE 2.3.6 built Aug  1 2024
+
+Input file name: /maps/projects/racimolab/people/fnl270/GitHub/mast_hiv/data/18_ML_trees/2708_trimmed_alns_HIV_2021_subset.fasta
+User tree file name: /maps/projects/racimolab/people/fnl270/GitHub/mast_hiv/data/tree_subsets/modeltrees_30.newick
+Type of analysis: tree reconstruction
+Random seed number: 39359
+
+REFERENCES
+----------
+
+To cite IQ-TREE please use:
+
+Bui Quang Minh, Heiko A. Schmidt, Olga Chernomor, Dominik Schrempf,
+Michael D. Woodhams, Arndt von Haeseler, and Robert Lanfear (2020)
+IQ-TREE 2: New models and efficient methods for phylogenetic inference
+in the genomic era. Mol. Biol. Evol., in press.
+https://doi.org/10.1093/molbev/msaa015
+
+SEQUENCE ALIGNMENT
+------------------
+
+Input data: 37 sequences with 8941 nucleotide sites
+Number of constant sites: 4798 (= 53.6629% of all sites)
+Number of invariant (constant or ambiguous constant) sites: 4798 (= 53.6629% of all sites)
+Number of parsimony informative sites: 3080
+Number of distinct site patterns: 3524
+
+SUBSTITUTION PROCESS
+--------------------
+
+Linked Model of substitution: GTR+FO+R4
+
+Rate parameter R:
+
+  A-C: 1.8571
+  A-G: 4.9805
+  A-T: 0.7596
+  C-G: 0.6036
+  C-T: 5.9867
+  G-T: 1.0000
+
+State frequencies: (estimated with maximum likelihood)
+
+  pi(A) = 0.3983
+  pi(C) = 0.1706
+  pi(G) = 0.2165
+  pi(T) = 0.2146
+
+Rate matrix Q:
+
+  A   -0.8574    0.1744    0.5933   0.08972
+  C    0.4071    -1.186    0.0719    0.7071
+  G     1.092   0.05668    -1.267    0.1181
+  T    0.1665    0.5622    0.1191   -0.8478
+
+Tree weights: 0.05203, 0.07173, 0.03382, 0.03472, 0.04582, 0.03959, 0.04685, 0.02734, 0.08503, 0.02782, 0.03708, 0.03383, 0.03292, 0.02591, 0.02295, 0.03155, 0.02691, 0.02303, 0.02335, 0.02113, 0.03488, 0.02884, 0.02257, 0.02508, 0.02002, 0.03452, 0.02032, 0.03245, 0.01653, 0.02138
+
+Linked Model of rate heterogeneity: FreeRate with 4 categories
+Site proportion and rates:  (0.5089,0.008995) (0.2576,0.4306) (0.1824,1.187) (0.05116,2.386)
+
+ Category  Relative_rate  Proportion
+  1         0.008995       0.5089
+  2         0.4306         0.2576
+  3         1.187          0.1824
+  4         2.386          0.05116
+
+USER TREE
+---------
+
+Log-likelihood of the tree: -81420.8138 (s.e. 944.3073)
+Unconstrained log-likelihood (without tree): -47054.3803
+Number of free parameters (#branches + #model parameters): 2173
+Akaike information criterion (AIC) score: 167187.6275
+Corrected Akaike information criterion (AICc) score: 168583.8450
+Bayesian information criterion (BIC) score: 182612.4566
+
+Total tree lengths (sum of branch lengths): 3.2616 5.9501 2.9114 2.2494 1.1809 2.5264 1.0438 1.4133 0.9498 2.0870 3.2682 3.8839 1.9347 1.3535 2.4543 4.0151 1.4033 13.5891 2.2082 3.0534 2.1000 2.1902 3.7136 3.2117 2.2692 1.3528 3.2704 1.9460 2.6226 3.0653
+Sum of internal branch lengths: 0.9427 (28.9014% of tree length) 0.0802 (1.3472% of tree length) 0.7539 (25.8956% of tree length) 0.7809 (34.7160% of tree length) 0.3093 (26.1895% of tree length) 0.8198 (32.4501% of tree length) 0.2079 (19.9188% of tree length) 0.4056 (28.6988% of tree length) 0.1939 (20.4179% of tree length) 0.6460 (30.9529% of tree length) 1.0298 (31.5108% of tree length) 1.3612 (35.0483% of tree length) 0.6205 (32.0712% of tree length) 0.2607 (19.2616% of tree length) 0.7987 (32.5430% of tree length) 1.3260 (33.0242% of tree length) 0.6030 (42.9706% of tree length) 1.7306 (12.7351% of tree length) 0.7747 (35.0828% of tree length) 0.7717 (25.2717% of tree length) 0.7391 (35.1978% of tree length) 0.6737 (30.7575% of tree length) 1.2289 (33.0915% of tree length) 1.3456 (41.8973% of tree length) 0.4939 (21.7673% of tree length) 0.4707 (34.7956% of tree length) 0.9972 (30.4913% of tree length) 0.5396 (27.7297% of tree length) 0.8540 (32.5616% of tree length) 1.2493 (40.7554% of tree length)
+
+Trees with branch lengths are provided in the file: /maps/projects/racimolab/people/fnl270/GitHub/mast_hiv/output/mast_model_30/mast_model_30.treefile
+
+TIME STAMP
+----------
+
+Date and time: Mon Sep  8 01:35:15 2025
+Total CPU time used: 9058 seconds (2h:30m:57s)
+Total wall-clock time used: 4741 seconds (1h:19m:0s)
+

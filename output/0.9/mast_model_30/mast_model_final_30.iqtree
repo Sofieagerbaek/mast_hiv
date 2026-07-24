@@ -1,0 +1,97 @@
+IQ-TREE 3.0.1 built Jun 30 2025
+
+Input file name: /Users/gzd130/Library/CloudStorage/OneDrive-RegionSjælland/Mol_phylo/revision/mast_hiv/data/0.9_trimmed_alns_HIV_2021_subset.fasta
+User tree file name: /Users/gzd130/Library/CloudStorage/OneDrive-RegionSjælland/Mol_phylo/revision/mast_hiv/generated/0.9/tree_subsets/modeltrees_final_30.newick
+Type of analysis: tree reconstruction
+Random seed number: 148503
+
+REFERENCES
+----------
+
+To cite IQ-TREE 3 please use:
+
+Thomas K.F. Wong, Nhan Ly-Trong, Huaiyan Ren, Hector Banos, Andrew J. Roger,
+Edward Susko, Chris Bielow, Nicola De Maio, Nick Goldman, Matthew W. Hahn,
+Gavin Huttley, Robert Lanfear, Bui Quang Minh (2025)
+IQ-TREE 3: Phylogenomic Inference Software using Complex Evolutionary Models.
+Submitted.
+
+Since you used the MAST model "+T" please also cite: 
+
+Thomas KF Wong, Caitlin Cherryh, Allen G Rodrigo, Matthew W Hahn,
+Bui Quang Minh, Robert Lanfear (2024)
+MAST: Phylogenetic Inference with Mixtures Across Sites and Trees.
+Systematic Biology, 73:375–391.
+https://doi.org/10.1093/sysbio/syae008
+
+SEQUENCE ALIGNMENT
+------------------
+
+NOTE: Alignment sequence type is auto-detected. If in doubt, specify it via -st option.
+Input data: 37 sequences with 8546 nucleotide sites
+Number of constant sites: 4621 (= 54.0721% of all sites)
+Number of invariant (constant or ambiguous constant) sites: 4621 (= 54.0721% of all sites)
+Number of parsimony informative sites: 2923
+Number of distinct site patterns: 3226
+
+SUBSTITUTION PROCESS
+--------------------
+
+Linked Model of substitution: GTR+FO+R4
+
+Rate parameter R:
+
+  A-C: 1.8739
+  A-G: 5.1803
+  A-T: 0.7726
+  C-G: 0.5882
+  C-T: 6.4303
+  G-T: 1.0000
+
+State frequencies: (estimated with maximum likelihood)
+
+  pi(A) = 0.3979
+  pi(C) = 0.1705
+  pi(G) = 0.2164
+  pi(T) = 0.2152
+
+Rate matrix Q:
+
+  A   -0.8515    0.1693     0.594   0.08811
+  C    0.3951    -1.196   0.06745    0.7333
+  G     1.092   0.05315    -1.259     0.114
+  T    0.1629    0.5811    0.1147   -0.8586
+
+Tree weights: 0.03023, 0.06964, 0.08046, 0.01986, 0.02969, 0.1196, 0.03309, 0.02684, 0.03126, 0.03148, 0.0307, 0.0313, 0.03152, 0.02399, 0.01775, 0.0269, 0.03161, 0.03087, 0.02924, 0.02585, 0.02079, 0.02802, 0.02567, 0.02315, 0.02637, 0.02122, 0.02939, 0.02094, 0.03305, 0.0195
+
+Linked Model of rate heterogeneity: FreeRate with 4 categories
+Site proportion and rates:  (0.4612,0.001) (0.2715,0.2478) (0.2301,0.9358) (0.0372,2.386)
+
+ Category  Relative_rate  Proportion
+  1         0.001          0.4612
+  2         0.2478         0.2715
+  3         0.9358         0.2301
+  4         2.386          0.0372
+
+USER TREE
+---------
+
+Log-likelihood of the tree: -76982.2598 (s.e. 916.4586)
+Unconstrained log-likelihood (without tree): -43288.3537
+Number of free parameters (#branches + #model parameters): 2173
+Akaike information criterion (AIC) score: 158310.5196
+Corrected Akaike information criterion (AICc) score: 159793.2886
+Bayesian information criterion (BIC) score: 173637.1637
+
+Total tree lengths (sum of branch lengths): 4.2224 1.4745 10.6282 2.5043 2.1421 0.7384 2.8066 1.6751 2.9583 2.7178 4.9896 2.0652 2.2751 2.1950 2.1311 3.6394 1.5729 1.6986 2.3221 1.8988 3.4906 2.5169 1.6865 4.7391 1.8400 2.5835 1.9896 2.4960 4.0740 2.9413
+Sum of internal branch lengths: 0.7984 (18.9091% of tree length) 0.5105 (34.6237% of tree length) 0.1593 (1.4987% of tree length) 0.4483 (17.9028% of tree length) 0.6022 (28.1137% of tree length) 0.1018 (13.7805% of tree length) 0.7803 (27.8028% of tree length) 0.7415 (44.2640% of tree length) 0.6734 (22.7643% of tree length) 0.8840 (32.5251% of tree length) 1.6728 (33.5260% of tree length) 0.5785 (28.0127% of tree length) 0.8250 (36.2630% of tree length) 0.7841 (35.7208% of tree length) 0.4297 (20.1624% of tree length) 0.9578 (26.3179% of tree length) 0.5544 (35.2462% of tree length) 0.5482 (32.2727% of tree length) 0.8095 (34.8617% of tree length) 0.6942 (36.5615% of tree length) 1.0591 (30.3409% of tree length) 1.0114 (40.1829% of tree length) 0.7103 (42.1183% of tree length) 1.7285 (36.4727% of tree length) 0.6563 (35.6662% of tree length) 0.9871 (38.2067% of tree length) 0.7336 (36.8722% of tree length) 0.8056 (32.2779% of tree length) 0.9363 (22.9829% of tree length) 0.6290 (21.3839% of tree length)
+
+Trees with branch lengths are provided in the file: /Users/gzd130/Library/CloudStorage/OneDrive-RegionSjælland/Mol_phylo/revision/mast_hiv/output/0.9/mast_model_30/mast_model_final_30.treefile
+
+TIME STAMP
+----------
+
+Date and time: Tue Jan 20 14:52:10 2026
+Total CPU time used: 1.108e+04 seconds (3h:4m:38s)
+Total wall-clock time used: 1.231e+04 seconds (3h:25m:11s)
+

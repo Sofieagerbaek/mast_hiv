@@ -7,7 +7,7 @@ author: "Sofie Agerbæk"
 
 
 Load alignment, trim data, subset data into partitions 
-For each partition make a NJ tree, save these as newick files.
+For each partition make a ML tree, save these as newick files.
 
 ```{r, echo=FALSE}
 library(seqinr)
@@ -15,15 +15,18 @@ library(ape)
 library(ggplot2)
 library(purrr)
 library(dplyr)
+library(phytools)
 ```
 
 ## Load alignment
 ```{r}
-genome_alignment <- read.alignment("HIV1_CON_2021_genome_DNA_subset.fasta", format = "fasta")
+genome_alignment <- read.alignment("../data/HIV1_CON_2021_genome_DNA_subset.fasta", format = "fasta")
 alignment_matrix <- as.DNAbin(genome_alignment)
 ```
 
-## Trim data - remove columns with gaps in more than 50% of the sequences.  
+## Trim data - remove columns with gaps in more than X % of the sequences.  
+
+Define trimming function
 ```{r}
 trimCols <- function(al, prop, codon = T){
   mat <- as.character(as.matrix(al))
@@ -50,14 +53,15 @@ trimCols <- function(al, prop, codon = T){
 }
 ```
 
+Initial run we had the threshold at 0.5, two other thresholds were also tested: 0.1 and 0.9
 ```{r}
-trimmed_alignment <- trimCols(alignment_matrix, 0.5, codon = FALSE)
-alignment_matrix <- trimmed_alignment
+threshold = 0.1 #change here for the gap 'allowance', we run 0.1, 0.5, and 0.9
+trimmed_alignment <- trimCols(alignment_matrix, threshold, codon = FALSE)
 ```
 
 ## save trimmed alignment in fasta format
 ```{r}
-sequences <- as.character(as.list(alignment_matrix))
+sequences <- as.character(as.list(trimmed_alignment))
 sequences <- sapply(sequences, paste, collapse = "")
 headers <- names(sequences)
 ```
@@ -73,33 +77,37 @@ fasta_lines <- unlist(lapply(names(sequences), function(label) {
   c(paste0(">", label), seq) # Create a header and sequence entry
 }))
 
-output_file <- "2708_trimmed_alns_HIV_2021_subset.fasta"
+output_file <- "../data/0.1_trimmed_alns_HIV_2021_subset.fasta" #change output file naming when changing threshold
 
 writeLines(fasta_lines, output_file)
 ```
 
 ## Make Maximum likelihood trees with IQtree 
 
+Find IQtree 
 ```{r}
-Sys.setenv(PATH = paste("C:/Users/soage/iqtree-3.0.1-Windows/bin", Sys.getenv("PATH"), sep=";"))
+Sys.setenv(PATH = paste("/opt/homebrew/bin", Sys.getenv("PATH"), sep=":"))
 ```
-
 
 Read trimmed alignment from fasta file
 ```{r}
-genome_alignment <- read.alignment("2708_trimmed_alns_HIV_2021_subset.fasta", format = "fasta")
+genome_alignment <- read.alignment("../data/0.1_trimmed_alns_HIV_2021_subset.fasta", format = "fasta")
 alignment_matrix <- as.DNAbin(genome_alignment)
 ```
 
 
-Partitioning data into 18 segments (~500bp segment for each tree)
+Partitioning data into 18 segments (~500bp segment for each tree) and running ML to generate trees for each segment
 
 ```{r}
+setwd("../generated/0.1/18_ML_trees")
+
 alignment_length <- ncol(alignment_matrix)
 num_sequences <- nrow(alignment_matrix)
-window_size <- round(alignment_length / 18)
+window_size <- ceiling(alignment_length / 18) #rounding up to ensure the full alignment is contained in the 18 segments, as consequence the last segment may be a few nucleotides shorter than the rest. 
 
-trees <- list()
+trees18 <- list()
+
+missing_by_segment <- list()
 
 for (start in seq(1, alignment_length, by = window_size)) {
   end <- start + window_size - 1
@@ -108,30 +116,64 @@ for (start in seq(1, alignment_length, by = window_size)) {
   if (end > alignment_length) {
     end <- alignment_length
   } #Make sure the last segment is not out of bounds
-  print(end)
+  
+  #print(end)
   #current window 
   segment <- alignment_matrix[, start:end]
-  
-  write.FASTA(segment, file = paste0("aln_segment_", start, "_to_", end, ".fasta"))
-  file_path <- paste0("aln_segment_", start, "_to_", end)
  
-  system(paste0("iqtree3 -s ", file_path, ".fasta -m MFP -B 1000 -T 4 -pre ", file_path))
+  # Because of the threshold allowing up to 90% gaps (threshold = 0.1), we can end up with alignment segments for which all positions are gaps for certain sequences. IQ-tree cannot handle these and will not produce a tree, so if any subtype is all gaps in any segment, we need to remove it from the alignment
+  all_gaps <- names(which(checkDNA(segment) == window_size)) # Check if any sequences are all gaps
+  seg_id <- paste0(start, "_", end)
+  missing_by_segment[[seg_id]] <- all_gaps # To know afterwards which sequences were excluded from which segments
   
-  ml_tree <- read.tree(paste0(file_path, ".treefile"))
-  trees[[paste0("Tree_", start, "_to_", end)]] <- ml_tree
+  #segment_filtered <- segment[!(rownames(segment) %in% all_gaps), ]
+  
+  #write.FASTA(segment_filtered, file = paste0("aln_segment_", start, "_to_", end, ".fasta")) 
+  file_path <- paste0("aln_segment_", start, "_to_", end) #change filepath here for different thresholds
+
+  #system(paste0("iqtree3 -s ", file_path, ".fasta -m MFP -B 1000 -nt 2 -pre ", file_path))
+  
+  ml_tree <- read.tree(paste0(file_path, ".treefile")) #read the trees written to file
+  
+  trees18[[paste0("Tree_", start, "_to_", end)]] <- ml_tree
 }
 
-multiPhylo <- do.call(c, trees)
+multiPhylo <- do.call(c, trees18)
 write.tree(multiPhylo, file = "all_18_trimmed_ML_trees.newick")
 
+```
+
+For the mast model downstream we need all taxa present in all trees, since we had to remove some taxa from some segments as they were all gaps and the ML tree building doesn't accept this, we have to add back those removed taxa to those trees. 
+This is only relevant for the 0.1 threshold segment 1 
+```{r}
+tree1 <- trees18[["Tree_1_to_531"]]
+ 
+internal_nodes <- (Ntip(tree1) + 1):(Ntip(tree1) + Nnode(tree1))
+
+all_tiplabels <- trees18[["Tree_532_to_1062"]][["tip.label"]]
+tree1_tiplabels <- trees18[["Tree_1_to_531"]][["tip.label"]]
+
+missing_tips <- all_tiplabels[!all_tiplabels %in% tree1_tiplabels]
+
+n_tree <- tree1
+for (t in missing_tips) {
+   n_tree <- bind.tip(n_tree, t, where = sample(internal_nodes, 1), edge.length = 0) 
+   print(t)
+  }
+
+write.tree(n_tree, "tree1_test.newick")
+trees18[["Tree_1_to_531"]] <- n_tree
+
+multiPhylo <- do.call(c, trees18)
+write.tree(multiPhylo, file = "all_18_trimmed_ML_trees.newick")
 ```
 
 
 We shift the windows by half a window length to create 17 trees for comparison of break points
 ```{r}
-setwd("../17ML_trees")
+setwd("../generated/0.1/17_ML_trees") ### Change this dir accordingly
 
-half_window_size <- round(window_size/2)
+half_window_size <- ceiling(window_size/2)
 trees17 <- list()
 
 for (start in seq(half_window_size, alignment_length - half_window_size + 1, by = window_size)) {
@@ -166,12 +208,19 @@ for (start in seq(half_window_size, alignment_length - half_window_size + 1, by 
   }
 ```
 
+Combine all trees into a single file
+```{r}
+trees35 <- c(trees18, trees17)
+multiPhylo <- do.call(c, trees35)
 
+setwd("~/Library/CloudStorage/OneDrive-RegionSjælland/Mol_phylo/revision/mast_hiv/generated")
+write.tree(multiPhylo, file = "0.1/35_trimmed_ML_trees.newick") 
+```
 
 ## Visualising branch lengths 
 
 ```{r}
-trees_18_ML <- read.tree(file = "18ML_trees/all_18_trimmed_ML_trees.newick")
+trees_18_ML <- read.tree(file = "0.1/18_ML_trees/all_18_trimmed_ML_trees.newick")
 
 branch_data18 <- imap_dfr(trees_18_ML, ~{
   tibble(
@@ -189,7 +238,7 @@ p18 <- ggplot(branch_data18)+
 p18
 
 #Sanity check to make sure no tree has too different branch lengths
-ggplot(branch_data, aes(x = factor(tree), y = log(branch_length), fill = factor(tree))) +
+ggplot(branch_data18, aes(x = factor(tree), y = log(branch_length), fill = factor(tree))) +
   geom_boxplot() +
   theme_minimal() +
   labs(
@@ -203,7 +252,7 @@ ggplot(branch_data, aes(x = factor(tree), y = log(branch_length), fill = factor(
 ```
 
 ```{r}
-trees_17_ML <- read.tree(file = "17ML_trees/17_shifted_windows_trimmed_ML_trees.newick")
+trees_17_ML <- read.tree(file = "0.1/17_ML_trees/17_shifted_windows_trimmed_ML_trees.newick")
 
 branch_data17 <- imap_dfr(trees_17_ML, ~{
   tibble(
@@ -224,5 +273,6 @@ p17
 library(patchwork)
 p18 + p17 
 ```
+
 
 

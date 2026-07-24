@@ -1,0 +1,156 @@
+IQ-TREE multicore version 2.3.6 for Linux x86 64-bit built Aug  1 2024
+Developed by Bui Quang Minh, Nguyen Lam Tung, Olga Chernomor, Heiko Schmidt,
+Dominik Schrempf, Michael Woodhams, Ly Trong Nhan, Thomas Wong
+
+Host:    racimocomp07fl.unicph.domain (AVX512, FMA3, 755 GB RAM)
+Command: iqtree2 -s /maps/projects/racimolab/people/fnl270/GitHub/mast_hiv/data/18_ML_trees/2708_trimmed_alns_HIV_2021_subset.fasta -m GTR+FO+R4+T -te /maps/projects/racimolab/people/fnl270/GitHub/mast_hiv/data/tree_subsets/modeltrees_20.newick --prefix /maps/projects/racimolab/people/fnl270/GitHub/mast_hiv/output/mast_model_20/mast_model_20 -fast -nt 2 -wspmr -wslmr -redo
+Seed:    885254 (Using SPRNG - Scalable Parallel Random Number Generator)
+Time:    Mon Sep  8 00:16:02 2025
+Kernel:  AVX+FMA - 2 threads (96 CPU cores detected)
+
+Reading alignment file /maps/projects/racimolab/people/fnl270/GitHub/mast_hiv/data/18_ML_trees/2708_trimmed_alns_HIV_2021_subset.fasta ... Fasta format detected
+Reading fasta file: done in 0.00468335 secs using 86.93% CPU
+Alignment most likely contains DNA/RNA sequences
+Alignment has 37 sequences with 8941 columns, 3524 distinct patterns
+3080 parsimony-informative, 1063 singleton sites, 4798 constant sites
+Analyzing sequences: done in 0.000461649 secs using 99.43% CPU
+Tree-mixture model
+Number of input trees: 20
+Minimum branch length is set to 0.0000010
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Linked substitution model:
+   GTR+FO
+
+Linked RHS model:
+   R4
+
+
+NOTE: 338 MB RAM (0 GB) is required!
+According to the parsimony scores along the sites, the tree weights are initialized to:
+0.0481407,0.0459296,0.0486524,0.0670312,0.0480310,0.0554272,0.0357983,0.0513835,0.0515229,0.0516333,0.0536717,0.0597731,0.0573555,0.0373225,0.0435133,0.0587592,0.0559240,0.0489098,0.0424627,0.0387580
+Estimate model parameters (epsilon = 0.01000)
+1. Initial log-likelihood: -89803.61356
+2. Current log-likelihood: -82457.40478
+3. Current log-likelihood: -82401.01626
+4. Current log-likelihood: -82381.30104
+5. Current log-likelihood: -82372.81405
+6. Current log-likelihood: -82366.46823
+7. Current log-likelihood: -82361.25399
+8. Current log-likelihood: -82355.70564
+9. Current log-likelihood: -82352.62630
+10. Current log-likelihood: -82350.68522
+11. Current log-likelihood: -82349.16338
+12. Current log-likelihood: -82347.93468
+13. Current log-likelihood: -82346.64250
+14. Current log-likelihood: -82345.56409
+15. Current log-likelihood: -82344.75925
+16. Current log-likelihood: -82343.93805
+17. Current log-likelihood: -82343.24685
+18. Current log-likelihood: -82342.67253
+19. Current log-likelihood: -82342.17329
+20. Current log-likelihood: -82341.69150
+21. Current log-likelihood: -82341.30226
+22. Current log-likelihood: -82340.95575
+23. Current log-likelihood: -82340.62754
+24. Current log-likelihood: -82340.36191
+25. Current log-likelihood: -82340.10750
+26. Current log-likelihood: -82339.88818
+27. Current log-likelihood: -82339.65131
+28. Current log-likelihood: -82339.47099
+29. Current log-likelihood: -82339.30208
+30. Current log-likelihood: -82339.14648
+31. Current log-likelihood: -82339.00021
+32. Current log-likelihood: -82338.86465
+33. Current log-likelihood: -82338.73639
+34. Current log-likelihood: -82338.61646
+35. Current log-likelihood: -82338.50217
+36. Current log-likelihood: -82338.39400
+37. Current log-likelihood: -82338.28987
+38. Current log-likelihood: -82338.19013
+39. Current log-likelihood: -82338.09272
+40. Current log-likelihood: -82337.99730
+41. Current log-likelihood: -82337.89155
+42. Current log-likelihood: -82337.72708
+43. Current log-likelihood: -82337.20679
+44. Current log-likelihood: -82337.10467
+45. Current log-likelihood: -82337.03380
+46. Current log-likelihood: -82336.94882
+47. Current log-likelihood: -82336.88895
+48. Current log-likelihood: -82336.81755
+49. Current log-likelihood: -82336.76814
+50. Current log-likelihood: -82336.72231
+51. Current log-likelihood: -82336.66190
+52. Current log-likelihood: -82336.62162
+53. Current log-likelihood: -82336.58437
+54. Current log-likelihood: -82336.54937
+55. Current log-likelihood: -82336.51636
+56. Current log-likelihood: -82336.48516
+57. Current log-likelihood: -82336.43862
+58. Current log-likelihood: -82336.41127
+59. Current log-likelihood: -82336.38532
+60. Current log-likelihood: -82336.36022
+61. Current log-likelihood: -82336.33683
+62. Current log-likelihood: -82336.31461
+63. Current log-likelihood: -82336.29339
+64. Current log-likelihood: -82336.27279
+65. Current log-likelihood: -82336.25352
+66. Current log-likelihood: -82336.23510
+67. Current log-likelihood: -82336.21720
+68. Current log-likelihood: -82336.20037
+69. Current log-likelihood: -82336.18418
+70. Current log-likelihood: -82336.16834
+71. Current log-likelihood: -82336.15343
+72. Current log-likelihood: -82336.13910
+73. Current log-likelihood: -82336.12506
+74. Current log-likelihood: -82336.11179
+75. Current log-likelihood: -82336.09894
+76. Current log-likelihood: -82336.08630
+77. Current log-likelihood: -82336.07430
+78. Current log-likelihood: -82336.06267
+79. Current log-likelihood: -82336.05120
+80. Current log-likelihood: -82336.04033
+81. Current log-likelihood: -82336.02974
+82. Current log-likelihood: -82336.01930
+83. Current log-likelihood: -82336.00931
+Final estimation on weights:
+0.09993,0.08310,0.03356,0.07613,0.06154,0.04469,0.03838,0.03950,0.09064,0.03422,0.04913,0.06672,0.03868,0.04105,0.03709,0.04158,0.04081,0.02495,0.03190,0.02642
+Wrote distance file to... 
+BEST SCORE FOUND : -82336.00931
+Site log-likelihoods per category printed to /maps/projects/racimolab/people/fnl270/GitHub/mast_hiv/output/mast_model_20/mast_model_20.sitelh
+Site probabilities per category printed to /maps/projects/racimolab/people/fnl270/GitHub/mast_hiv/output/mast_model_20/mast_model_20.siteprob
+Total tree lengths: 1.14543 6.56932 3.43239 1.99152 1.11490 3.35537 1.03417 2.19280 1.10526 2.69360 2.84479 3.71480 1.67780 2.11361 2.42910 3.53254 1.81861 12.21362 1.94236 3.03909
+
+Total number of iterations: 81
+CPU time used for tree search: 0.00004 sec (0h:0m:0s)
+Wall-clock time used for tree search: 0.00004 sec (0h:0m:0s)
+Total CPU time used: 6258.96460 sec (1h:44m:18s)
+Total wall-clock time used: 3268.55538 sec (0h:54m:28s)
+
+Analysis results written to: 
+  IQ-TREE report:                /maps/projects/racimolab/people/fnl270/GitHub/mast_hiv/output/mast_model_20/mast_model_20.iqtree
+  Maximum-likelihood tree:       /maps/projects/racimolab/people/fnl270/GitHub/mast_hiv/output/mast_model_20/mast_model_20.treefile
+  Site log-likelihoods:          /maps/projects/racimolab/people/fnl270/GitHub/mast_hiv/output/mast_model_20/mast_model_20.sitelh
+  Site probability per rate/mix: /maps/projects/racimolab/people/fnl270/GitHub/mast_hiv/output/mast_model_20/mast_model_20.siteprob
+  Screen log file:               /maps/projects/racimolab/people/fnl270/GitHub/mast_hiv/output/mast_model_20/mast_model_20.log
+
+Date and Time: Mon Sep  8 01:10:31 2025
