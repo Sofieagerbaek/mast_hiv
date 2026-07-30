@@ -1,0 +1,85 @@
+--- a/openrdp/common.py	2026-07-27 10:04:29.138087784 +0200
++++ b/openrdp/common.py	2026-07-27 10:04:43.483408155 +0200
+@@ -108,8 +108,14 @@
+     :param c_table: a 2x2 contingency table
+     :return: a tuple containing the chi-squared value and p-value
+     """
+-    # Compute chi-squared value if the expected frequencies are valid
+-    if (c_table[0][0] > 0 and c_table[0][1] > 0) or (c_table[1][0] > 0 and c_table[1][1] > 0):
++    # LOCAL PATCH (see rdp_analysis/patches/): chi2_contingency raises when any
++    # expected frequency is zero, which happens iff a row sum or a column sum is
++    # zero -- not the condition the original guard tested. The old test also
++    # rejected perfectly-associated tables such as [[5, 0], [0, 3]], which carry
++    # the strongest MaxChi/Chimaera signal there is.
++    row_sums = (c_table[0][0] + c_table[0][1], c_table[1][0] + c_table[1][1])
++    col_sums = (c_table[0][0] + c_table[1][0], c_table[0][1] + c_table[1][1])
++    if all(row_sums) and all(col_sums):
+ 
+         chi2, p_value, _, _ = chi2_contingency(c_table)
+ 
+--- a/openrdp/maxchi.py	2026-07-27 10:04:29.142087873 +0200
++++ b/openrdp/maxchi.py	2026-07-27 10:04:53.221625570 +0200
+@@ -260,6 +260,16 @@
+                     right -= 1
+ 
+             # 3, determine if left or right side of the new window is the best
++            # LOCAL PATCH (see rdp_analysis/patches/): the greedy loop above lets
++            # `right` reach len(seq1) (its expand guard is `right < len(seq1)`,
++            # then it increments) and lets `left` fall below 0, so these indices
++            # can run off the end of chi2_values (IndexError) or wrap around from
++            # the back (silently wrong). Clamp to the valid range. Clamping the
++            # variables rather than just the lookups also keeps the breakpoint
++            # coordinates derived from them inside the alignment.
++            last_pos = len(chi2_values[best[0]]) - 1
++            left = min(max(left, 0), last_pos)
++            right = min(max(right, 0), last_pos)
+             left_peak = chi2_values[best[0]][left]
+             right_peak = chi2_values[best[0]][right]
+             midpoint = left - (left - right)//2
+--- a/openrdp/chimaera.py	2026-07-27 10:13:32.938171985 +0200
++++ b/openrdp/chimaera.py	2026-07-27 11:01:55.721333845 +0200
+@@ -297,6 +297,13 @@
+                         elif best_move == 'contract_right':
+                             right -= 1
+ 
++                # LOCAL PATCH (see rdp_analysis/patches/): same off-by-one as
++                # maxchi.py -- the expand guard is `right < len(chi2_values)` and
++                # then increments, so `right` can index one past the end, and
++                # `left` can fall below 0 and wrap from the back. Clamp both.
++                last_pos = len(chi2_values) - 1
++                left = min(max(left, 0), last_pos)
++                right = min(max(right, 0), last_pos)
+                 left_peak = chi2_values[left]
+                 right_peak = chi2_values[right]
+                 midpoint = left - (left - right)//2
+--- a/openrdp/siscan.py	2026-07-27 14:14:50.502856016 +0200
++++ b/openrdp/siscan.py	2026-07-27 14:15:09.441253810 +0200
+@@ -191,7 +191,17 @@
+                         ind, new = self.find_interval(ind, maj1, close, ps)
+                         ps_fin = self.get_ps(signal, 0, ps) # identifier for later use to optimize shuffling (ok, upon further checking it's super slow still here)
+                         m1_intervals.append((ind, new, signal, ps_fin)) # which pattern/sum, and starting index and ending index of the recombinant region
+-                        ind = new # so we don't keep adding them back and forth
++                        # LOCAL PATCH (see rdp_analysis/patches/): find_interval
++                        # returns `end - 1`, and when it breaks on its first
++                        # iteration -- which happens whenever close[ind][ps] == 0,
++                        # since that is falsy -- it returns ind - 1. The original
++                        # `ind = new` then walked the index backwards, the `ind += 1`
++                        # below put it back where it started, and the enclosing
++                        # while re-tested the same still-true condition: an
++                        # infinite loop appending to m1_intervals forever. That is
++                        # the unbounded memory growth that got the 0.1 and 0.5
++                        # SiScan runs OOM-killed. Never move backwards.
++                        ind = max(new, ind) # so we don't keep adding them back and forth
+                 ind += 1
+ 
+             while ind2 < len(close):
+@@ -202,7 +212,8 @@
+                         ind, new = self.find_interval(ind2, maj2, close, ps)
+                         ps_fin = self.get_ps(signal, 1, ps)
+                         m2_intervals.append((ind2, new, signal, ps_fin))
+-                        ind2 = new
++                        # LOCAL PATCH: same non-advancing index as the maj1 loop above.
++                        ind2 = max(new, ind2)
+                 ind2 += 1
+ 
+         return m1_intervals, m2_intervals        
