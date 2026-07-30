@@ -87,3 +87,7 @@ data/*.frags
 # SiScan per-chunk pickles: intermediates that merge_siscan_chunks.py consumes to
 # build parts/openrdp_<t>_siscan.csv, and regenerable from rerun_siscan.sh.
 rdp_analysis/results/*/parts/siscan_chunks/
+
+# Python bytecode cache (siscan_chunk.py now imports check_openrdp_patches.py).
+__pycache__/
+*.pyc
