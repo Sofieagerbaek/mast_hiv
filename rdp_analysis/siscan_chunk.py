@@ -24,6 +24,7 @@ import pickle
 import sys
 import time
 
+from check_openrdp_patches import require_patches
 from openrdp import Scanner
 from openrdp.common import TripletGenerator, setup_upgma, upgma
 from openrdp.siscan import Siscan
@@ -48,6 +49,8 @@ def main():
                    help='stop after scanning this many triplets (diagnostics only; '
                         'produces a deliberately incomplete chunk)')
     args = p.parse_args()
+
+    require_patches()
 
     if not 0 <= args.chunk < args.nchunks:
         sys.exit(f'chunk {args.chunk} out of range for nchunks {args.nchunks}')

@@ -7,6 +7,12 @@
 set -u
 cd "$(dirname "$0")"   # rdp_analysis/
 
+# Refuse to run against an unpatched openrdp: unpatched, MaxChi crashes, SiScan
+# loops forever leaking ~5 GB/h, and MaxChi/Chimaera silently disagree with the
+# committed results. See check_openrdp_patches.py.
+python3 check_openrdp_patches.py || exit 1
+
+
 DATA="../data"
 CFG="config/hiv_rdp.ini"
 METHODS=(rdp geneconv bootscan maxchi chimaera siscan threeseq)
