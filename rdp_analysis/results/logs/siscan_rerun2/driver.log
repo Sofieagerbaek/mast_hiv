@@ -1,0 +1,26 @@
+=== [Mon 27 Jul 14:29:29 CEST 2026] starting SiScan rerun 2: thresholds 0.1 and 0.5, 9 chunks each ===
+=== [Mon 27 Jul 14:29:29 CEST 2026] launched 18 chunks: 2755755 2755756 2755758 2755760 2755762 2755764 2755765 2755768 2755771 2755784 2755785 2755786 2755789 2755791 2755792 2755795 2755796 2755798 ===
+=== [Mon 27 Jul 22:51:09 CEST 2026] OK   0.1/siscan[0] ===
+=== [Mon 27 Jul 23:01:37 CEST 2026] OK   0.1/siscan[1] ===
+=== [Mon 27 Jul 23:01:37 CEST 2026] OK   0.1/siscan[2] ===
+=== [Mon 27 Jul 23:01:37 CEST 2026] OK   0.1/siscan[3] ===
+=== [Mon 27 Jul 23:16:47 CEST 2026] OK   0.1/siscan[4] ===
+=== [Mon 27 Jul 23:16:47 CEST 2026] OK   0.1/siscan[5] ===
+=== [Mon 27 Jul 23:16:47 CEST 2026] OK   0.1/siscan[6] ===
+=== [Mon 27 Jul 23:16:47 CEST 2026] OK   0.1/siscan[7] ===
+=== [Mon 27 Jul 23:16:47 CEST 2026] OK   0.1/siscan[8] ===
+=== [Mon 27 Jul 23:16:47 CEST 2026] OK   0.5/siscan[0] ===
+=== [Mon 27 Jul 23:16:47 CEST 2026] OK   0.5/siscan[1] ===
+=== [Mon 27 Jul 23:16:47 CEST 2026] OK   0.5/siscan[2] ===
+=== [Mon 27 Jul 23:16:47 CEST 2026] OK   0.5/siscan[3] ===
+=== [Mon 27 Jul 23:16:47 CEST 2026] OK   0.5/siscan[4] ===
+=== [Mon 27 Jul 23:16:47 CEST 2026] OK   0.5/siscan[5] ===
+=== [Mon 27 Jul 23:16:47 CEST 2026] OK   0.5/siscan[6] ===
+=== [Mon 27 Jul 23:16:47 CEST 2026] OK   0.5/siscan[7] ===
+=== [Mon 27 Jul 23:16:47 CEST 2026] OK   0.5/siscan[8] ===
+=== [Mon 27 Jul 23:16:47 CEST 2026] all chunks finished (0 failed) ===
+results/0.1/parts/openrdp_0.1_siscan.csv: 7770 triplets, 1 raw events, 1 after merging
+=== [Mon 27 Jul 23:16:49 CEST 2026] merged -> results/0.1/parts/openrdp_0.1_siscan.csv ===
+results/0.5/parts/openrdp_0.5_siscan.csv: 7770 triplets, 4 raw events, 4 after merging
+=== [Mon 27 Jul 23:16:51 CEST 2026] merged -> results/0.5/parts/openrdp_0.5_siscan.csv ===
+=== [Mon 27 Jul 23:16:51 CEST 2026] SISCAN RERUN 2 DONE (0 failures) -- run merge_all.sh to rebuild the combined CSVs ===

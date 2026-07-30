@@ -1,0 +1,7 @@
+=== [Fri 24 Jul 23:02:55 CEST 2026] launching 21 jobs ===
+=== [Fri 24 Jul 23:02:55 CEST 2026] waiting on 21 jobs: 2887255 2887256 2887257 2887259 2887261 2887262 2887266 2887274 2887277 2887278 2887282 2887283 2887286 2887287 2887295 2887297 2887301 2887302 2887304 2887308 2887311 ===
+=== [Mon 27 Jul 04:55:26 CEST 2026] all 21 jobs finished ===
+=== [Mon 27 Jul 04:55:26 CEST 2026] merged -> results/0.1/openrdp_0.1.csv (115366 lines) ===
+=== [Mon 27 Jul 04:55:26 CEST 2026] merged -> results/0.5/openrdp_0.5.csv (99289 lines) ===
+=== [Mon 27 Jul 04:55:26 CEST 2026] merged -> results/0.9/openrdp_0.9.csv (82731 lines) ===
+=== [Mon 27 Jul 04:55:26 CEST 2026] ALL DONE ===

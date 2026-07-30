@@ -1,0 +1,5 @@
+Method,Start,End,Recombinant,Parent1,Parent2,Pvalue
+Siscan,8940,8939,02A,A1,A3,0.0
+Siscan,8940,8939,02A,A1,D,0.0
+Siscan,8940,8939,BF1,01B,D,0.0
+Siscan,8920,8919,K,A2,J,0.0

@@ -1,0 +1,17 @@
+here() starts at /home/davidd/mast_hiv
+IQ-TREE: /home/davidd/iqtree3
+[0.9] K* = 5 | B = 100 | k = 2..10 | trees fixed (-te), BLs re-optimised
+  fitted model: GTR{1.9451/5.0745/0.8342/0.7428/6.526/1}+FU{0.3997/0.1668/0.2182/0.2153}+R4{0.5502/0.007167/0.2671/0.2472/0.1661/0.8881/0.01647/2.386}
+  tree weights: 0.1217, 0.2094, 0.1533, 0.2454, 0.2703
+Simulating 100 replicate alignments of 8546 sites ...
+Refitting 900 MAST models (20 concurrent, 1 threads each) ...
+Threshold 0.9: core-selected K* = 5
+Replicates: 100 | refit range k = 2..10
+Power to recover K* under BIC: 100.0%
+Distribution of recovered K:
+
+  2   3   4   5   6   7   8   9  10 
+  0   0   0 100   0   0   0   0   0 
+null device 
+          1 
+[0.9] done. Results in /home/davidd/mast_hiv/power_bootstrap/results/0.9
