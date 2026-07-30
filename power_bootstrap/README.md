@@ -14,6 +14,27 @@ The test is built to match the core analysis exactly. It reuses the core fitted
 models, the core candidate trees, and the identical IQ-TREE call. Only the input
 alignment changes, from the real data to a simulated replicate.
 
+## Results
+
+Complete for all three thresholds. B = 100 replicates each, refits over
+k = 2..10, BIC selection.
+
+| Threshold | Core-selected K\* | Power to recover K\* | Distribution of recovered K | Runtime |
+|---|---|---|---|---|
+| 0.1 | 4 | **98%** | 98 × K=4, 2 × K=5 | ~59 h |
+| 0.5 | 6 | **100%** | 100 × K=6 | ~26 h |
+| 0.9 | 5 | **100%** | 100 × K=5 | ~15 h |
+
+The core analysis therefore recovers its own selected number of trees essentially
+always. The only departures are two replicates at threshold 0.1 that overshot to
+K = 5; no replicate at any threshold ever underestimated K\*. Power does not
+decrease as gappy columns are trimmed more aggressively, so the tree-number
+signal is not an artefact of retaining gap-rich sites.
+
+Read these numbers as an upper bound on confidence in K\*, since the data are
+simulated under the selected model itself. They say the selection procedure is
+self-consistent and not starved of signal; they cannot say the model is correct.
+
 ## What the test does
 
 For each threshold t with core-selected best K\*:
@@ -59,11 +80,12 @@ K is the same quantity the core analysis reports.
 From the repository root, so that `here::i_am` anchors on `mast_hiv.Rproj`:
 
 ```
-zsh power_bootstrap/run_power_bootstrap.sh
+bash power_bootstrap/run_power_bootstrap.sh
 ```
 
-This runs all three thresholds and writes per-threshold logs to
-`results/logs/`. To run one threshold directly:
+This runs the three thresholds one after another and writes per-threshold logs to
+`results/logs/power_<t>.log`, plus start/end milestones to
+`results/logs/sequential_driver.log`. To run one threshold directly:
 
 ```
 Rscript power_bootstrap/power_bootstrap.R 0.1
@@ -81,17 +103,23 @@ Available overrides: `PB_B` (replicates), `PB_KMIN`, `PB_KMAX` (refit range),
 
 ## Running on a bigger machine
 
-The full B = 100 analysis is heavy. On a 10-core laptop the three thresholds
-take roughly three days, because each replicate needs a k = 2 to 10 sweep of
-branch-length re-optimising MAST fits. A server with more cores finishes it in
-proportionally less time, since the fits are independent and run in parallel.
+The full B = 100 analysis is heavy: each replicate needs a k = 2 to 10 sweep of
+branch-length re-optimising MAST fits, so 900 fits per threshold and 2,700 in
+total. A server with more cores finishes it in proportionally less time, since
+the fits are independent and run in parallel.
+
+The committed results took ~5.2 days of wall clock in total on a 64-core Linux
+server, deliberately capped at 20 concurrent fits because the machine was shared.
+Observed throughput was 21–35 refits/hour depending on threshold, the shorter 0.9
+alignment being the fastest. Uncapped on a quiet machine of that size it would be
+substantially quicker.
 
 To move it to another machine, copy the repository there, make sure IQ-TREE 3,
 R, and the packages `here` and `ape` are available, then run the driver from the
 repository root:
 
 ```
-zsh power_bootstrap/run_power_bootstrap.sh
+bash power_bootstrap/run_power_bootstrap.sh
 ```
 
 By default the script uses every detected core, one thread per fit, which gives
@@ -99,7 +127,7 @@ the best throughput for many small independent fits. Point it at the machine's
 IQ-TREE and, if needed, cap the cores:
 
 ```
-PB_IQTREE=/path/to/iqtree3 PB_NCORES=32 zsh power_bootstrap/run_power_bootstrap.sh
+PB_IQTREE=/path/to/iqtree3 PB_NCORES=32 bash power_bootstrap/run_power_bootstrap.sh
 ```
 
 The pipeline is otherwise self-contained. It anchors paths with `here::i_am`, so
@@ -120,6 +148,35 @@ Per threshold, written to `results/<t>/`:
 | `recovered_K_<t>.csv` | BIC-minimising k per replicate |
 | `power_summary_<t>.txt` | power to recover K\* and the distribution of recovered K |
 | `recovered_K_<t>.pdf` | bar plot of recovered K across replicates |
+
+All four are committed for all three thresholds. `bic_by_rep_<t>.csv` is the
+full record — BIC for every one of the 100 replicates at every k from 2 to 10 —
+so any further figure or test on the BIC-vs-k curves can be built from the
+repository as cloned, without re-running anything.
+
+### Intermediates, and how to regenerate them
+
+Two intermediate directories are **not** committed, and are gitignored:
+
+| Path | Size | Contents |
+|---|---|---|
+| `results/<t>/sims/rep_NNN.fasta` | ~33 MB per threshold | the 100 simulated replicate alignments |
+| `results/<t>/refits/rep_NNN_kK.*` | ~1 GB per threshold | IQ-TREE's per-refit output (`.iqtree`, `.sitelh`, `.siteprob`, `.treefile`, `.ckp.gz`), 5,400 files |
+
+Together they come to ~3.1 GB over 16,500 files, which does not belong in a git
+repository. They are exactly reproducible rather than lost: AliSim is seeded
+deterministically per replicate and per tree class from `PB_SEED` (default 1), so
+re-running the driver with the same defaults regenerates identical simulated
+alignments and identical refits. Re-running one threshold is enough if that is
+all you need.
+
+Regenerate them if you want **site-level** analyses of the bootstrap replicates —
+the per-refit `.siteprob` files hold the posterior tree-class assignment for every
+site, and `.sitelh` the per-site log-likelihoods, which are what site-wise or
+sliding-window analyses need. Note that site-level results for the *real*
+alignments are already committed and need no regeneration: see
+`output/<t>/mast_model_<K*>/mast_model_final_<K*>.siteprob` and `.sitelh`, which
+is where the core analysis' own across-sites work comes from.
 
 ## Interpretation
 

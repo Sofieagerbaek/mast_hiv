@@ -50,11 +50,36 @@ rsconnect/
 
 # Others
 !output/
-figures/
+# Root-level knitr/RMarkdown figure scratch only. Deliberately NOT a bare
+# "figures/", which would also swallow rdp_analysis/results/figures/ -- those
+# PDFs are committed results.
+/figures/
 .DS_store
 iqtree2
 bin/
 data/17_ML_trees/other_iqtree_files/
 data/18_ML_trees/other_iqtree_files/
 scripts/newer_MAST_post_processing_files/
-script/MAST_post_processing.rmd
+scripts/MAST_post_processing.rmd
+
+# --- Analysis intermediates (see power_bootstrap/ and rdp_analysis/ READMEs) ---
+# Per-replicate IQ-TREE scratch from the power bootstrap: ~3.0 GB over 16,200
+# files, and the simulated replicate alignments, ~98 MB. Both are exactly
+# regenerable -- power_bootstrap.R seeds AliSim deterministically from PB_SEED
+# (default 1), so re-running reproduces them byte for byte. Everything needed
+# for downstream figures is condensed into the committed CSVs.
+power_bootstrap/results/*/refits/
+power_bootstrap/results/*/sims/
+
+# OpenRDP per-job run logs: 23 MB, dominated by RDP/Bootscan progress spam.
+# The driver logs that record what ran are kept (see the negations below).
+rdp_analysis/results/logs/openrdp_*.log
+rdp_analysis/results/logs/*_stdout.log
+rdp_analysis/results/logs/rerun/
+rdp_analysis/results/logs/siscan_rerun2/*.log
+!rdp_analysis/results/logs/parallel_driver.log
+!rdp_analysis/results/logs/siscan_rerun2/driver.log
+
+# GENECONV writes a .frags byproduct next to its input alignment. Not an input,
+# not a result.
+data/*.frags
