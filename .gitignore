@@ -54,7 +54,7 @@ rsconnect/
 # "figures/", which would also swallow rdp_analysis/results/figures/ -- those
 # PDFs are committed results.
 /figures/
-.DS_store
+**/.DS_Store
 iqtree2
 bin/
 data/17_ML_trees/other_iqtree_files/

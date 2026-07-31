@@ -83,6 +83,77 @@ threshold_configs <- list(
 )
 ```
 
+Figures are written to `../figures/<threshold>/`, mirroring the `output/` and `generated/`
+layout. Create those subdirectories up front:
+```{r figures_dirs}
+for (cfg in threshold_configs) {
+  dir.create(paste0("../figures/", cfg$threshold), showWarnings = FALSE, recursive = TRUE)
+}
+```
+
+Every figure below is saved as PNG (or PDF, for the already-vector ones) plus a matching
+SVG. These three helpers wrap the save calls so each plot only needs one line:
+```{r save_helpers}
+library(svglite)
+
+# ggplot/patchwork object -> raster PNG + vector SVG at the same physical size.
+save_gg <- function(plot, path_no_ext, width, height, units = "mm", dpi = 400, bg = "white") {
+  ggsave(paste0(path_no_ext, ".png"), plot = plot, device = "png",
+         width = width, height = height, units = units, dpi = dpi, bg = bg)
+  ggsave(paste0(path_no_ext, ".svg"), plot = plot, device = "svg",
+         width = width, height = height, units = units, bg = bg)
+}
+
+# draw_fn(): a zero-arg function that draws onto whatever device is currently open
+# (print(some_ggplot), or base plot() calls e.g. for cophylo objects) -> PDF + SVG.
+save_pdf_and_svg <- function(draw_fn, path_no_ext, width, height, ...) {
+  pdf(paste0(path_no_ext, ".pdf"), width = width, height = height, ...)
+  draw_fn()
+  dev.off()
+  svglite(paste0(path_no_ext, ".svg"), width = width, height = height)
+  draw_fn()
+  dev.off()
+}
+
+# Same, but PNG instead of PDF (for base-graphics plots previously saved as PNG only).
+save_raster_and_svg <- function(draw_fn, path_no_ext, width, height, units = "in", res = 300, bg = "white") {
+  scale <- switch(units, "in" = 1, "mm" = 1 / 25.4, "cm" = 1 / 2.54, stop("unknown units: ", units))
+  w_in  <- width  * scale
+  h_in  <- height * scale
+  png(paste0(path_no_ext, ".png"), width = w_in, height = h_in, units = "in", res = res, bg = bg)
+  draw_fn()
+  dev.off()
+  svglite(paste0(path_no_ext, ".svg"), width = w_in, height = h_in, bg = bg)
+  draw_fn()
+  dev.off()
+}
+```
+
+Each of the 35 candidate trees is built from a fixed-position genome window (18 non-overlapping
+windows, plus 17 more shifted by half a window — see `scripts/make_ML_trees.Rmd`). This reads
+those window boundaries back off the `aln_segment_<start>_to_<end>.treefile` filenames, in the
+same order they were originally concatenated into `35_trimmed_ML_trees.newick` (18-set first,
+then the 17-set), so row `tree_num == i` matches tree `i` everywhere else in this script:
+```{r window_helper}
+get_tree_windows <- function(threshold) {
+  parse_dir <- function(dir) {
+    files  <- unique(basename(list.files(
+      dir, pattern = "^aln_segment_[0-9]+_to_[0-9]+\\.treefile$", recursive = TRUE
+    )))
+    m      <- regmatches(files, regexec("^aln_segment_([0-9]+)_to_([0-9]+)\\.treefile$", files))
+    starts <- as.integer(vapply(m, `[[`, character(1), 2))
+    ends   <- as.integer(vapply(m, `[[`, character(1), 3))
+    data.frame(start = starts, end = ends)[order(starts), ]
+  }
+  windows <- rbind(
+    parse_dir(paste0("../generated/", threshold, "/18_ML_trees")),
+    parse_dir(paste0("../generated/", threshold, "/17_ML_trees"))
+  )
+  windows$tree_num <- seq_len(nrow(windows))
+  windows
+}
+```
+
 Sanity check — verify that the hardcoded `best_k` matches the BIC minimum in each CSV:
 ```{r bic_sanity_check}
 for (cfg in threshold_configs) {
@@ -128,11 +199,8 @@ for (cfg in threshold_configs) {
 
   print(bic_plot)
 
-  ggsave(
-    paste0("../figures/", cfg$threshold, "_BIC_plot.png"),
-    plot = bic_plot, device = "png",
-    width = 90, height = 60, units = "mm", dpi = 400, bg = "white"
-  )
+  save_gg(bic_plot, paste0("../figures/", cfg$threshold, "/BIC_plot"),
+          width = 90, height = 60, units = "mm", dpi = 400, bg = "white")
 }
 ```
 
@@ -210,11 +278,8 @@ for (cfg in threshold_configs) {
   comb_plot <- gapprop_plot / entropy_plot
   print(comb_plot)
 
-  ggsave(
-    paste0("../figures/", cfg$threshold, "_gappy_entropy.png"),
-    comb_plot, device = 'png',
-    width = 190, height = 70, units = 'mm', dpi = 300, bg = 'white'
-  )
+  save_gg(comb_plot, paste0("../figures/", cfg$threshold, "/gappy_entropy"),
+          width = 190, height = 70, units = "mm", dpi = 300, bg = "white")
 }
 ```
 
@@ -253,11 +318,8 @@ for (cfg in threshold_configs) {
 
   print(tree_dist_plot)
 
-  ggsave(
-    paste0("../figures/", cfg$threshold, "_tree_distances.png"),
-    plot = tree_dist_plot, device = "png",
-    width = 85, height = 55, units = "mm", dpi = 400, bg = "white"
-  )
+  save_gg(tree_dist_plot, paste0("../figures/", cfg$threshold, "/tree_distances"),
+          width = 85, height = 55, units = "mm", dpi = 400, bg = "white")
 }
 ```
 
@@ -349,31 +411,51 @@ for (cfg in threshold_configs) {
 
   # 1. Modal class strip
   modal_class_plot <- ggplot(trimmed_sitelh, aes(x = site, y = 'tree', colour = modal_class)) +
-    geom_point(size = 12, shape = 108) +
+    geom_point(size = 7, shape = 108) +
     labs(title = paste0("Modal class — threshold: ", cfg$threshold)) +
     theme(
       axis.title       = element_blank(),
       axis.ticks.y     = element_blank(),
       axis.text.y      = element_blank(),
       axis.line.y      = element_blank(),
-      legend.position  = 'top'
+      legend.position  = 'top',
+      legend.title     = element_text(size = 7),
+      legend.text      = element_text(size = 7),
+      legend.key.size  = unit(0.4, "lines")
     ) +
     scale_colour_manual(values = pall_k) +
+    guides(colour = guide_legend(override.aes = list(size = 4))) +
     x_scale
 
   print(modal_class_plot)
-  ggsave(
-    paste0("../figures/", cfg$threshold, "_likelihood_modal_class_plot.png"),
-    modal_class_plot, device = 'png',
-    width = 180, height = 20, units = 'mm', dpi = 300, bg = 'white'
-  )
+  save_gg(modal_class_plot, paste0("../figures/", cfg$threshold, "/likelihood_modal_class_plot"),
+          width = 180, height = 20, units = "mm", dpi = 300, bg = "white")
+
+  # 1b. Originating window per top tree — where each tree's own ML topology was inferred
+  # from, for comparison against where MAST calls it the modal (best-supported) class above.
+  window_df      <- get_tree_windows(cfg$threshold)
+  window_df      <- window_df[match(top_trees, window_df$tree_num), ]
+  window_df$tree <- tree_col_names
+
+  window_plot <- ggplot(window_df, aes(x = start, xend = end, y = tree, yend = tree, colour = tree)) +
+    geom_segment(linewidth = 4, lineend = "butt") +
+    scale_colour_manual(values = pall_k) +
+    x_scale +
+    theme(
+      axis.title      = element_blank(),
+      axis.text.x     = element_blank(),
+      axis.ticks.x    = element_blank(),
+      axis.text.y     = element_blank(),
+      axis.ticks.y    = element_blank(),
+      legend.position = 'none'
+    )
 
   # 2. Mean relative likelihood coloured by modal class
   spline_prob <- as.data.frame(spline(trimmed_sitelh$site, trimmed_sitelh$modal_prob))
 
   mean_prob_plot <- ggplot(trimmed_sitelh) +
     geom_line(data = spline_prob, aes(x = x, y = y), alpha = 0.5, color = "grey50") +
-    geom_point(aes(x = site, y = modal_prob, colour = modal_class), size = 0.7) +
+    geom_point(aes(x = site, y = modal_prob, colour = modal_class), size = 0.25) +
     x_scale +
     scale_y_continuous(breaks = c(0, 1, 2, 3, 4)) +
     scale_colour_manual(values = pall_k) +
@@ -385,18 +467,15 @@ for (cfg in threshold_configs) {
     guides(colour = 'none')
 
   print(mean_prob_plot)
-  ggsave(
-    paste0("../figures/", cfg$threshold, "_mean_likelihood_modal.png"),
-    mean_prob_plot, device = 'png',
-    width = 173, height = 32, units = 'mm', dpi = 400, bg = 'white'
-  )
+  save_gg(mean_prob_plot, paste0("../figures/", cfg$threshold, "/mean_likelihood_modal"),
+          width = 173, height = 32, units = "mm", dpi = 400, bg = "white")
 
   # 3. Proportion of windows supporting modal class
   spline_prop <- as.data.frame(spline(trimmed_sitelh$site, trimmed_sitelh$modal_prop))
 
   proportion_plot <- ggplot(trimmed_sitelh) +
     geom_line(data = spline_prop, aes(x = x, y = y), color = "grey50", alpha = 0.5) +
-    geom_point(aes(x = site, y = modal_prop, colour = modal_class), size = 0.7) +
+    geom_point(aes(x = site, y = modal_prop, colour = modal_class), size = 0.25) +
     x_scale +
     scale_colour_manual(values = pall_k) +
     theme(
@@ -407,16 +486,13 @@ for (cfg in threshold_configs) {
     guides(colour = 'none')
 
   print(proportion_plot)
-  ggsave(
-    paste0("../figures/", cfg$threshold, "_proportion_modal.png"),
-    proportion_plot, device = 'png',
-    width = 173, height = 32, units = 'mm', dpi = 400, bg = 'white'
-  )
+  save_gg(proportion_plot, paste0("../figures/", cfg$threshold, "/proportion_modal"),
+          width = 173, height = 32, units = "mm", dpi = 400, bg = "white")
 
   # 4. Entropy coloured by modal class
   entropy_modal_plot <- ggplot(trimmed_sitelh) +
     geom_line( aes(x = site, y = windowentropy), color = "grey50", alpha = 0.5) +
-    geom_point(aes(x = site, y = windowentropy, colour = modal_class), size = 0.7) +
+    geom_point(aes(x = site, y = windowentropy, colour = modal_class), size = 0.25) +
     x_scale +
     scale_colour_manual(values = pall_k) +
     theme(
@@ -429,7 +505,7 @@ for (cfg in threshold_configs) {
   # 5. Gappiness coloured by modal class
   gappy_modal_plot <- ggplot(trimmed_sitelh) +
     geom_line( aes(x = site, y = gappyness), color = "grey50", alpha = 0.5) +
-    geom_point(aes(x = site, y = gappyness, colour = modal_class), size = 0.7) +
+    geom_point(aes(x = site, y = gappyness, colour = modal_class), size = 0.25) +
     x_scale +
     scale_colour_manual(values = pall_k) +
     theme(
@@ -439,38 +515,133 @@ for (cfg in threshold_configs) {
     ) +
     guides(colour = 'none')
 
-  combined_plot <- modal_class_plot / mean_prob_plot / proportion_plot /
-                   gappy_modal_plot / entropy_modal_plot
+  combined_plot <- (modal_class_plot / window_plot / mean_prob_plot / proportion_plot /
+                     gappy_modal_plot / entropy_modal_plot) +
+                    plot_layout(heights = c(0.5, 0.3, 1, 1, 1, 1))
 
   print(combined_plot)
 
-  png(
-    paste0("../figures/", cfg$threshold, "_sitelh_plots.png"),
-    height = 6, width = 8, units = "in", res = 300
-  )
-  print(combined_plot)
-  dev.off()
+  save_raster_and_svg(function() print(combined_plot),
+                       paste0("../figures/", cfg$threshold, "/sitelh_plots"),
+                       width = 165, height = 165.1, units = "mm", res = 300)
 
   message("Done: site likelihood figures for threshold ", cfg$threshold)
 }
 ```
 
 
+### Tree weights
+
+Two weight barplots per threshold: the initial 35-candidate-tree weights (before model
+selection, from `mast_model_35`/`mast_35`), and the re-optimized weights of just the
+best-k trees in the final selected model. Both come from the `Tree weights:` line IQ-TREE
+writes into the `.iqtree` report.
+
+```{r weights_helper}
+extract_tree_weights <- function(iqtree_path) {
+  line <- grep("^Tree weights", readLines(iqtree_path, warn = FALSE), value = TRUE)
+  as.numeric(strsplit(gsub("Tree weights: |,", "", line), "\\s+")[[1]])
+}
+```
+
+Initial 35-tree weights (unordered by tree index, and ranked descending):
+```{r weights_init35, fig.show='hold'}
+for (cfg in threshold_configs) {
+
+  w          <- extract_tree_weights(
+    paste0("../output/", cfg$output_dir, "/mast_model_35/mast_model_final_35.iqtree")
+  )
+  weights_df <- data.frame(tree = seq_along(w), weight = w)
+
+  p_unordered <- ggplot(weights_df, aes(x = tree, y = weight)) +
+    geom_col() +
+    labs(
+      title = paste0("Initial 35-tree weights — threshold: ", cfg$threshold),
+      x = "Tree", y = "Weight"
+    ) +
+    theme_bw()
+  print(p_unordered)
+
+  p_reordered <- ggplot(weights_df, aes(x = reorder(tree, -weight), y = weight)) +
+    geom_col() +
+    labs(
+      title = paste0("Initial 35-tree weights (ranked) — threshold: ", cfg$threshold),
+      x = "Tree", y = "Weight"
+    ) +
+    theme_bw()
+  print(p_reordered)
+
+  save_pdf_and_svg(function() print(p_unordered),
+                    paste0("../figures/", cfg$threshold, "/init35_weights"), width = 6, height = 4)
+
+  save_pdf_and_svg(function() print(p_reordered),
+                    paste0("../figures/", cfg$threshold, "/init35_weights_reordered"), width = 6, height = 4)
+
+  message("Done: init35 weight plots for threshold ", cfg$threshold)
+}
+```
+
+Best-k model weights, ranked descending with values labeled on the bars:
+```{r weights_bestk, fig.show='hold'}
+for (cfg in threshold_configs) {
+
+  k <- cfg$best_k
+  w <- extract_tree_weights(
+    paste0("../output/", cfg$output_dir, "/mast_model_", k, "/mast_model_final_", k, ".iqtree")
+  )
+
+  weights_df         <- data.frame(tree = cfg$top_trees, weight = w)
+  weights_df         <- weights_df[order(-weights_df$weight), ]
+  weights_df$tree     <- factor(weights_df$tree, levels = weights_df$tree)
+
+  weight_plot <- ggplot(weights_df, aes(x = tree, y = weight)) +
+    geom_col(fill = "grey45", width = 0.9) +
+    geom_text(
+      aes(label = round(weight, digits = 3), y = 0.02),
+      color = "white", size = 5, vjust = 0.5
+    ) +
+    labs(
+      title = paste0("Best-", k, " model weights — threshold: ", cfg$threshold),
+      y = "Model weight", x = "Tree"
+    ) +
+    theme(
+      axis.ticks   = element_blank(),
+      axis.title.y = element_blank(),
+      axis.text.x  = element_text(size = 12),
+      axis.title.x = element_text(size = 9)
+    ) +
+    guides(colour = 'none')
+
+  print(weight_plot)
+
+  # PNG+SVG at the display size; a second PDF at a different (publication) aspect ratio
+  # is also kept below — same plot, so one SVG for it is enough.
+  save_gg(weight_plot, paste0("../figures/", cfg$threshold, "/weights_bestk"),
+          width = 100, height = 50, units = "mm", dpi = 400, bg = "white")
+
+  pdf(paste0("../figures/", cfg$threshold, "/weights_bestk.pdf"), width = 5, height = 2)
+  print(weight_plot)
+  dev.off()
+
+  message("Done: best-k weight plot for threshold ", cfg$threshold)
+}
+```
+
+
 ---
 
-## 0.5-threshold-specific analyses
+## Branch support and taxon contributions (per threshold)
 
-> **Note:** Site concordance factors (SCF) have currently only been computed for the
-> 0.5 threshold (see `iqtree_scf.sh`). The cophyloplots and taxon contribution plots
-> below are therefore specific to the 0.5 best model (trees 10, 21, 30).
-> To produce equivalent figures for 0.1 or 0.9, first update `iqtree_scf.sh` with
-> the relevant alignment and tree paths and re-run it.
+For each threshold, the three highest-weighted trees of its best model are compared
+pairwise: cophyloplots annotated with site concordance factors (SCF, from
+`iqtree_scf.sh`/`scripts/iqtree_scf.sh <threshold> <tree1> <tree2> <tree3>`), and each
+taxon's contribution to topological discordance between the pair.
 
 ### Branch support — site concordance factors (SCF)
 
-Loading and preprocessing the three highest-weighted trees from the 0.5 best model.
+Loading and preprocessing the three highest-weighted trees per threshold.
 
-```{r scf_load_05}
+```{r scf_load}
 load_scf_tree <- function(path) {
   tr   <- read.tree(path)
   vals <- do.call(rbind, strsplit(tr$node.label, "/"))
@@ -479,10 +650,6 @@ load_scf_tree <- function(path) {
   tr
 }
 
-tree10_scf <- load_scf_tree("../output/0.5_output/scf/scf_tree_10.cf.tree")
-tree21_scf <- load_scf_tree("../output/0.5_output/scf/scf_tree_21.cf.tree")
-tree30_scf <- load_scf_tree("../output/0.5_output/scf/scf_tree_30.cf.tree")
-
 root_and_trim <- function(tr) {
   tr <- root(tr, outgroup = "CPZ", resolve.root = TRUE)
   tr <- ladderize(tr)
@@ -490,12 +657,31 @@ root_and_trim <- function(tr) {
   drop.tip(tr, "CPZ")
 }
 
-ladd_10_scf <- root_and_trim(tree10_scf)
-ladd_21_scf <- root_and_trim(tree21_scf)
-ladd_30_scf <- root_and_trim(tree30_scf)
+top3_by_weight <- function(cfg) {
+  w <- extract_tree_weights(
+    paste0("../output/", cfg$output_dir, "/mast_model_", cfg$best_k,
+           "/mast_model_final_", cfg$best_k, ".iqtree")
+  )
+  # cfg$top_trees is the *initial* 35-tree run's ranking; the k-tree subset gets
+  # re-optimized jointly, so its weights (and hence rank order) can differ. Take
+  # the top 3 by the re-optimized weights, not the initial-run order.
+  cfg$top_trees[order(-w)][1:3]
+}
+
+scf_trees_list <- list()
+for (cfg in threshold_configs) {
+  top3 <- top3_by_weight(cfg)
+  trs  <- lapply(top3, function(i) {
+    root_and_trim(load_scf_tree(
+      paste0("../output/", cfg$output_dir, "/scf/scf_tree_", i, ".cf.tree")
+    ))
+  })
+  names(trs) <- paste0("tree_", top3)
+  scf_trees_list[[cfg$threshold]] <- trs
+}
 ```
 
-```{r scf_palette_05}
+```{r scf_palette}
 subtypes_of_interest <- c('A', 'B', 'C', 'D', 'AE', 'F1', 'cpx', 'J', 'BF')
 assoc        <- cbind(subtypes_of_interest, subtypes_of_interest)
 pall_cophylo <- met.brewer("Klimt", n = 9)
@@ -503,7 +689,7 @@ taxa_colors  <- setNames(pall_cophylo, subtypes_of_interest)
 ```
 
 Palette reference:
-```{r scf_palette_plot_05, fig.width=5, fig.height=2}
+```{r scf_palette_plot, fig.width=5, fig.height=2}
 palldf      <- data.frame(tip = assoc[, 1], color = pall_cophylo)
 palldf$tip  <- factor(palldf$tip, levels = palldf$tip)
 
@@ -530,38 +716,9 @@ add_scf_dots <- function(obj) {
 }
 ```
 
-Cophyloplots:
-```{r cophylo_10v21_05}
-png("../figures/10v21_cophyloplot_w_scf.png", height = 7, width = 8, res = 400, units = "cm")
-obj <- cophylo(ladd_10_scf, ladd_21_scf, assoc = assoc, rotate = FALSE, use.edge.length = TRUE)
-plot(obj, part=0.42, link.col=pall_cophylo, link.lwd=1.5, link.type="curved",
-     link.lty="solid", fsize=c(0.8,0.8), ftype='off', pts=FALSE)
-add_scf_dots(obj)
-dev.off()
-```
+### Cophyloplots and taxon contributions to discordance
 
-```{r cophylo_10v30_05}
-png("../figures/10v30_cophyloplot_w_scf.png", height = 7, width = 8, res = 400, units = "cm")
-obj <- cophylo(ladd_10_scf, ladd_30_scf, assoc = assoc, rotate = FALSE, use.edge.length = TRUE)
-plot(obj, part=0.42, link.col=pall_cophylo, link.lwd=1.5, link.type="curved",
-     link.lty="solid", fsize=c(0.8,0.8), ftype='off', pts=FALSE)
-add_scf_dots(obj)
-dev.off()
-```
-
-```{r cophylo_21v30_05}
-png("../figures/21v30_cophyloplot_w_scf.png", height = 7, width = 8, res = 400, units = "cm")
-obj <- cophylo(ladd_21_scf, ladd_30_scf, assoc = assoc, rotate = FALSE, use.edge.length = TRUE)
-plot(obj, part=0.42, link.col=pall_cophylo, link.lwd=1.5, link.type="curved",
-     link.lty="solid", fsize=c(0.8,0.8), ftype='off', pts=FALSE)
-add_scf_dots(obj)
-dev.off()
-```
-
-
-### Taxon contributions to discordance
-
-```{r taxon_contrib_05}
+```{r taxon_contrib_fn}
 taxon.contribution.to.disc <- function(tr1, tr2) {
   taxa        <- intersect(tr1$tip.label, tr2$tip.label)
   disc.metric <- setNames(numeric(length(taxa)), taxa)
@@ -575,36 +732,66 @@ make_contrib_df <- function(x) {
   data.frame(subt = factor(names(x), levels = names(x)), contrib = x)
 }
 
-disc_10_21 <- taxon.contribution.to.disc(ladd_10_scf, ladd_21_scf)
-disc_10_30 <- taxon.contribution.to.disc(ladd_10_scf, ladd_30_scf)
-disc_21_30 <- taxon.contribution.to.disc(ladd_21_scf, ladd_30_scf)
-
-hiv_contrib_tab_10_21 <- make_contrib_df(sort(disc_10_21[subtypes_of_interest]))
-hiv_contrib_tab_10_30 <- make_contrib_df(sort(disc_10_30[subtypes_of_interest]))
-hiv_contrib_tab_21_30 <- make_contrib_df(sort(disc_21_30[subtypes_of_interest]))
-
 contrib_theme <- theme(
   panel.grid.major.y = element_line(color = "grey90"),
   axis.ticks         = element_blank(),
   legend.position    = "none",
   axis.title         = element_blank()
 )
+```
 
-p1 <- ggplot(hiv_contrib_tab_10_21, aes(x = subt, y = contrib, fill = subt)) +
-  geom_col() + scale_fill_manual(values = taxa_colors) +
-  coord_cartesian(ylim = c(8.1, 8.8)) + contrib_theme + ggtitle("Trees 10 vs 21")
+```{r cophylo_and_taxon_contrib, fig.show='hold'}
+for (cfg in threshold_configs) {
 
-p2 <- ggplot(hiv_contrib_tab_10_30, aes(x = subt, y = contrib, fill = subt)) +
-  geom_col() + scale_fill_manual(values = taxa_colors) +
-  coord_cartesian(ylim = c(6.8, 7.5)) + contrib_theme + ggtitle("Trees 10 vs 30")
+  top3  <- top3_by_weight(cfg)
+  trs   <- scf_trees_list[[cfg$threshold]]
+  pairs <- combn(top3, 2, simplify = FALSE)
 
-p3 <- ggplot(hiv_contrib_tab_21_30, aes(x = subt, y = contrib, fill = subt)) +
-  geom_col() + scale_fill_manual(values = taxa_colors) +
-  coord_cartesian(ylim = c(7.3, 8.0)) + contrib_theme + ggtitle("Trees 21 vs 30")
+  contrib_plots <- list()
 
-print(p1); print(p2); print(p3)
+  for (pr in pairs) {
+    t1    <- trs[[paste0("tree_", pr[1])]]
+    t2    <- trs[[paste0("tree_", pr[2])]]
+    label <- paste0(pr[1], "v", pr[2])
 
-pdf("../figures/Fig_taxon_contribution.pdf", width = 5, height = 1.5, useDingbats = FALSE)
-print(p1); print(p2); print(p3)
-dev.off()
+    # Cophyloplot with SCF dots
+    obj <- cophylo(t1, t2, assoc = assoc, rotate = FALSE, use.edge.length = TRUE)
+    draw_cophylo <- function() {
+      plot(obj, part = 0.42, link.col = pall_cophylo, link.lwd = 1.5, link.type = "curved",
+           link.lty = "solid", fsize = c(0.8, 0.8), ftype = 'off', pts = FALSE)
+      add_scf_dots(obj)
+    }
+    save_raster_and_svg(draw_cophylo,
+                         paste0("../figures/", cfg$threshold, "/", label, "_cophyloplot_w_scf"),
+                         width = 8, height = 7, units = "cm", res = 400)
+
+    # Taxon contribution to discordance
+    disc       <- taxon.contribution.to.disc(t1, t2)
+    contrib_df <- make_contrib_df(sort(disc[subtypes_of_interest]))
+    pad        <- 0.05 * diff(range(contrib_df$contrib))
+
+    p <- ggplot(contrib_df, aes(x = subt, y = contrib, fill = subt)) +
+      geom_col() + scale_fill_manual(values = taxa_colors) +
+      coord_cartesian(ylim = range(contrib_df$contrib) + c(-pad, pad)) +
+      contrib_theme + ggtitle(paste0("Trees ", pr[1], " vs ", pr[2]))
+
+    print(p)
+    contrib_plots[[label]] <- p
+
+    # Individual SVG per pair (the combined PDF below is multi-page, which SVG can't hold)
+    ggsave(
+      paste0("../figures/", cfg$threshold, "/", label, "_taxon_contribution.svg"),
+      plot = p, device = "svg", width = 5, height = 1.5, units = "in", bg = "white"
+    )
+  }
+
+  pdf(
+    paste0("../figures/", cfg$threshold, "/Fig_taxon_contribution.pdf"),
+    width = 5, height = 1.5, useDingbats = FALSE
+  )
+  for (p in contrib_plots) print(p)
+  dev.off()
+
+  message("Done: SCF cophyloplots + taxon contribution for threshold ", cfg$threshold)
+}
 ```

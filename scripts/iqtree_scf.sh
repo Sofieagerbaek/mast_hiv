@@ -13,9 +13,24 @@
 #
 # Output goes to output/{output_dir}/scf/
 # Output dir mapping: 0.5 -> 0.5_output, others -> same as threshold
+#
+# IQ-TREE binary: defaults to the checked-in ./bin/iqtree2 (Linux build, for the
+# cluster). Override with IQTREE_BIN, e.g. IQTREE_BIN=iqtree3 on macOS/arm64, where
+# the repo binary won't run. Flags differ between the v2 and v3 CLIs (fixed-tree flag,
+# thread flag), so the binary's reported major version picks the right ones.
 
 THRESHOLD="${1:?Usage: iqtree_scf.sh <threshold> <tree_nrs|all>}"
 shift   # remaining args are tree numbers (or "all")
+
+IQTREE_BIN="${IQTREE_BIN:-./bin/iqtree2}"
+IQTREE_MAJOR=$("$IQTREE_BIN" --version 2>&1 | grep -oE "version [0-9]+" | head -1 | grep -oE "[0-9]+")
+if [ "$IQTREE_MAJOR" -ge 3 ] 2>/dev/null; then
+    FIXTREE_FLAGS=(--tree-fix -t)
+    THREAD_FLAG=(-T AUTO)
+else
+    FIXTREE_FLAGS=(-te)
+    THREAD_FLAG=(-nt AUTO)
+fi
 
 # Resolve output directory name (0.5 uses legacy "0.5_output" folder)
 if [ "$THRESHOLD" == "0.5" ]; then
@@ -58,12 +73,12 @@ for i in $TREELIST; do
     sed -n "${i}p" "$TREES" > "$TREEFILE"
 
     echo "  Running IQ-TREE SCF..."
-    ./bin/iqtree2 \
-        -te  "$TREEFILE" \
+    "$IQTREE_BIN" \
+        "${FIXTREE_FLAGS[@]}" "$TREEFILE" \
         -s   "$FASTA" \
         --scfl "$SCF_REPS" \
         --prefix "${OUTDIR}/scf_tree_${i}" \
-        -nt AUTO
+        "${THREAD_FLAG[@]}"
 done
 
 echo "SCF done for threshold ${THRESHOLD}."

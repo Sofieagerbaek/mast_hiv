@@ -1,0 +1,136 @@
+IQ-TREE version 3.1.3 for MacOS ARM 64-bit built Jul 22 2026
+Developed by Bui Quang Minh, Thomas Wong, Nhan Ly-Trong, Huaiyan Ren
+Contributed by Lam-Tung Nguyen, Dominik Schrempf, Chris Bielow,
+Olga Chernomor, Michael Woodhams, Diep Thi Hoang, Heiko Schmidt
+
+Host:    SUN1032320 (SSE4.2, 36 GB RAM)
+Command: iqtree3 -t generated/0.9/ind_trees/tree_25.newick --tree-fix -s data/0.9_trimmed_alns_HIV_2021_subset.fasta --scfl 100 --prefix output/0.9/scf/scf_tree_25 -T AUTO
+Seed:    678552 (Using SPRNG - Scalable Parallel Random Number Generator)
+Time:    Fri Jul 31 14:44:32 2026
+Kernel:  SSE2 - auto-detect threads (14 CPU cores detected)
+
+Reading alignment file data/0.9_trimmed_alns_HIV_2021_subset.fasta ... Fasta format detected
+Reading fasta file: done in 0.00234509 secs using 82.13% CPU
+Alignment most likely contains DNA/RNA sequences
+Constructing alignment: done in 0.005198 secs using 68.8% CPU
+Alignment has 37 sequences with 8546 columns, 3226 distinct patterns
+2923 parsimony-informative, 1002 singleton sites, 4621 constant sites
+                                Gap/Ambiguity  Composition  p-value
+Analyzing sequences: done in 6.38962e-05 secs using 352.1% CPU
+   1  B.FR.83.HXBLAI_IIIB_BRU.K03455    0.14%    passed     41.06%
+   2  A                                 0.00%    passed     94.98%
+   3  A1                                0.00%    passed     88.46%
+   4  A2                                0.14%    passed     99.67%
+   5  A3                                0.23%    passed     49.63%
+   6  A6                                0.01%    passed     65.16%
+   7  B                                 0.02%    passed     87.39%
+   8  C                                 0.06%    passed     99.77%
+   9  D                                 0.09%    passed     94.13%
+  10  F1                                0.04%    passed     74.84%
+  11  F2                                0.11%    passed     93.22%
+  12  G                                 0.00%    passed     92.53%
+  13  H                                 0.11%    passed     95.93%
+  14  J                                 0.06%    passed     85.14%
+  15  K                                 0.70%    passed     61.15%
+  16  L                                 0.41%    passed     93.51%
+  17  AE                                0.01%    passed     86.94%
+  18  AG                                0.00%    passed     86.00%
+  19  cpx                               0.16%    passed     88.19%
+  20  DF                                0.05%    passed     86.17%
+  21  BC                                0.09%    passed     96.11%
+  22  CD                                0.06%    passed     99.76%
+  23  BF                                0.04%    passed     48.59%
+  24  BG                                0.23%    passed     92.78%
+  25  01B                               0.07%    passed     93.30%
+  26  A2D                               0.08%    passed     63.20%
+  27  01A1                              0.07%    passed     67.81%
+  28  A5U                               0.19%    passed     72.25%
+  29  AD                                0.04%    passed     80.72%
+  30  BF1                               0.06%    passed     92.44%
+  31  02G                               0.05%    passed     99.53%
+  32  A1D                               0.04%    passed     87.37%
+  33  02A                               0.06%    passed     36.05%
+  34  C2U                               0.04%    passed     98.27%
+  35  02B                               0.46%    passed     90.31%
+  36  01C                               0.08%    passed     97.19%
+  37  CPZ                               1.10%    failed      0.00%
+****  TOTAL                             0.14%  1 sequences failed composition chi2 test (p-value<5%; df=3)
+Checking for duplicate sequences: done in 0.000204086 secs using 95.55% CPU
+
+Reading input tree file generated/0.9/ind_trees/tree_25.newick ...
+Measuring multi-threading efficiency up to 14 CPU cores
+Increase to 10 rounds for branch lengths
+100 trees examined
+Threads: 1 / Time: 14.022 sec / Speedup: 1.000 / Efficiency: 100% / LogL: -102176
+Threads: 2 / Time: 10.973 sec / Speedup: 1.278 / Efficiency: 64% / LogL: -102176
+Threads: 3 / Time: 7.959 sec / Speedup: 1.762 / Efficiency: 59% / LogL: -102176
+Threads: 4 / Time: 6.827 sec / Speedup: 2.054 / Efficiency: 51% / LogL: -102176
+Threads: 5 / Time: 8.495 sec / Speedup: 1.651 / Efficiency: 33% / LogL: -102176
+Determining AUTO threadcount: done in 48.2758 secs using 164.3% CPU
+BEST NUMBER OF THREADS: 4
+
+Perform fast likelihood tree search using GTR+I+G model...
+Estimate model parameters (epsilon = 5.000)
+Perform nearest neighbor interchange...
+Estimate model parameters (epsilon = 1.000)
+1. Initial log-likelihood: -82245.998
+2. Current log-likelihood: -82238.934
+3. Current log-likelihood: -82235.913
+4. Current log-likelihood: -82233.347
+5. Current log-likelihood: -82231.089
+6. Current log-likelihood: -82229.169
+7. Current log-likelihood: -82227.578
+8. Current log-likelihood: -82226.239
+9. Current log-likelihood: -82225.150
+Optimal log-likelihood: -82223.995
+Rate parameters:  A-C: 2.22382  A-G: 5.31706  A-T: 1.00472  C-G: 0.80363  C-T: 6.71597  G-T: 1.00000
+Base frequencies:  A: 0.371  C: 0.172  G: 0.235  T: 0.222
+Proportion of invariable sites: 0.397
+Gamma shape alpha: 0.729
+Parameters optimization took 9 rounds (0.252 sec)
+Time for fast ML tree search: 0.833 seconds
+
+NOTE: ModelFinder requires 38 MB RAM!
+ModelFinder will test up to 968 DNA models (sample size: 8546 epsilon: 0.100) ...
+ No. Model         -LnL         df  AIC          AICc         BIC
+Akaike Information Criterion:           GTR+F+I+R4
+Corrected Akaike Information Criterion: GTR+F+I+R4
+Bayesian Information Criterion:         GTR+F+I+R4
+Best-fit model: GTR+F+I+R4 chosen according to BIC
+
+All model information printed to output/0.9/scf/scf_tree_25.model.gz
+CPU time for ModelFinder: 130.416 seconds (0h:2m:10s)
+Wall-clock time for ModelFinder: 66.524 seconds (0h:1m:6s)
+
+NOTE: 15 MB RAM (0 GB) is required!
+Estimate model parameters (epsilon = 0.010)
+1. Initial log-likelihood: -82120.591
+2. Current log-likelihood: -82120.575
+Optimal log-likelihood: -82120.567
+Rate parameters:  A-C: 2.26552  A-G: 5.59505  A-T: 1.00710  C-G: 0.80295  C-T: 6.78914  G-T: 1.00000
+Base frequencies:  A: 0.371  C: 0.172  G: 0.235  T: 0.222
+Proportion of invariable sites: 0.451
+Site proportion and rates:  (0.265,0.444) (0.188,1.974) (0.089,4.835) (0.006,13.730)
+Parameters optimization took 2 rounds (0.101 sec)
+Wrote distance file to... 
+BEST SCORE FOUND : -82120.567
+Total tree length: 2.570
+
+Total number of iterations: 0
+CPU time used for tree search: 0.000 sec (0h:0m:0s)
+Wall-clock time used for tree search: 0.000 sec (0h:0m:0s)
+Total CPU time used: 130.701 sec (0h:2m:10s)
+Total wall-clock time used: 66.633 sec (0h:1m:6s)
+Computing site concordance factor using likelihood...
+0.192 sec
+Tree with site concordance factors written to output/0.9/scf/scf_tree_25.cf.tree
+Annotated tree (best viewed in FigTree) written to output/0.9/scf/scf_tree_25.cf.tree.nex
+Tree with branch IDs written to output/0.9/scf/scf_tree_25.cf.branch
+Concordance factors per branch printed to output/0.9/scf/scf_tree_25.cf.stat
+
+Analysis results written to: 
+  IQ-TREE report:                output/0.9/scf/scf_tree_25.iqtree
+  Maximum-likelihood tree:       output/0.9/scf/scf_tree_25.treefile
+  Screen log file:               output/0.9/scf/scf_tree_25.log
+
+Date and Time: Fri Jul 31 14:45:39 2026
