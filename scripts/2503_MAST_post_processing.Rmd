@@ -96,12 +96,35 @@ SVG. These three helpers wrap the save calls so each plot only needs one line:
 ```{r save_helpers}
 library(svglite)
 
+# svglite (like most R vector devices) declares physical size in the SVG's
+# width/height attributes using "pt" (1/72in). Several common SVG viewers/editors
+# (older Inkscape releases especially) misread that "pt" suffix and treat the
+# number as unitless px at 96dpi instead of 72dpi, silently shrinking the
+# displayed size to 72/96 = 75% of the true physical size. Rewriting those two
+# attributes to explicit, unambiguous "mm" (same physical size, just relabelled)
+# avoids the whole class of bug. Called on every SVG we write, right after it's
+# written.
+set_svg_mm <- function(path, width_mm, height_mm) {
+  txt <- readLines(path, warn = FALSE)
+  txt <- sub(
+    "width='[0-9.]+pt' height='[0-9.]+pt'",
+    sprintf("width='%.2fmm' height='%.2fmm'", width_mm, height_mm),
+    txt
+  )
+  writeLines(txt, path)
+}
+
+mm_of <- function(value, units) {
+  value * switch(units, "mm" = 1, "cm" = 10, "in" = 25.4, stop("unknown units: ", units))
+}
+
 # ggplot/patchwork object -> raster PNG + vector SVG at the same physical size.
 save_gg <- function(plot, path_no_ext, width, height, units = "mm", dpi = 400, bg = "white") {
   ggsave(paste0(path_no_ext, ".png"), plot = plot, device = "png",
          width = width, height = height, units = units, dpi = dpi, bg = bg)
   ggsave(paste0(path_no_ext, ".svg"), plot = plot, device = "svg",
          width = width, height = height, units = units, bg = bg)
+  set_svg_mm(paste0(path_no_ext, ".svg"), mm_of(width, units), mm_of(height, units))
 }
 
 # draw_fn(): a zero-arg function that draws onto whatever device is currently open
@@ -113,6 +136,7 @@ save_pdf_and_svg <- function(draw_fn, path_no_ext, width, height, ...) {
   svglite(paste0(path_no_ext, ".svg"), width = width, height = height)
   draw_fn()
   dev.off()
+  set_svg_mm(paste0(path_no_ext, ".svg"), mm_of(width, "in"), mm_of(height, "in"))
 }
 
 # Same, but PNG instead of PDF (for base-graphics plots previously saved as PNG only).
@@ -126,6 +150,7 @@ save_raster_and_svg <- function(draw_fn, path_no_ext, width, height, units = "in
   svglite(paste0(path_no_ext, ".svg"), width = w_in, height = h_in, bg = bg)
   draw_fn()
   dev.off()
+  set_svg_mm(paste0(path_no_ext, ".svg"), mm_of(w_in, "in"), mm_of(h_in, "in"))
 }
 ```
 
@@ -191,16 +216,62 @@ for (cfg in threshold_configs) {
     theme_bw() +
     labs(title = paste0("Gap threshold: ", cfg$threshold, "  |  best k = ", cfg$best_k)) +
     theme(
+      text                = element_text(size = 8),
       axis.ticks          = element_blank(),
       panel.grid.minor    = element_blank(),
-      axis.text           = element_text(size = 12, colour = "black"),
-      axis.title          = element_blank()
+      axis.text           = element_text(size = 8, colour = "black"),
+      axis.title          = element_blank(),
+      plot.title          = element_text(size = 8)
     )
 
   print(bic_plot)
 
   save_gg(bic_plot, paste0("../figures/", cfg$threshold, "/BIC_plot"),
-          width = 90, height = 60, units = "mm", dpi = 400, bg = "white")
+          width = 65, height = 50, units = "mm", dpi = 400, bg = "white")
+}
+```
+
+Same BIC curve, with each power-bootstrap replicate's own BIC-vs-k curve drawn faintly
+behind it (see `power_bootstrap/`: B = 100 simulated replicates per threshold, refit over
+k = 2..10). If the empirical minimum sits where the replicate curves also bottom out, the
+selected k is a stable feature of the data rather than a coin flip:
+```{r bic_power_overlay, fig.show='hold'}
+for (cfg in threshold_configs) {
+
+  BIC_table <- read.csv(
+    paste0("../output/", cfg$output_dir, "/bic_values.csv"),
+    header = TRUE
+  ) %>% mutate(BIC_transformed = value / 10000)
+
+  rep_bic <- read.csv(paste0(
+    "../power_bootstrap/results/", cfg$threshold, "/bic_by_rep_", cfg$threshold, ".csv"
+  )) %>% mutate(BIC_transformed = BIC / 10000)
+
+  bic_power_plot <- ggplot(BIC_table, aes(x = n, y = BIC_transformed)) +
+    geom_line(
+      data = rep_bic, aes(x = k, y = BIC_transformed, group = rep),
+      colour = "grey70", alpha = 0.15, linewidth = 0.3, inherit.aes = FALSE
+    ) +
+    geom_line(colour = "black", linewidth = 0.4) +
+    geom_point(colour = "black", size = 1.2) +
+    geom_vline(xintercept = cfg$best_k, linetype = "dashed", colour = "grey50") +
+    theme_bw() +
+    labs(title = paste0("Gap threshold: ", cfg$threshold, "  |  best k = ", cfg$best_k)) +
+    theme(
+      text                = element_text(size = 8),
+      axis.ticks          = element_blank(),
+      panel.grid.minor    = element_blank(),
+      axis.text           = element_text(size = 8, colour = "black"),
+      axis.title          = element_blank(),
+      plot.title          = element_text(size = 8)
+    )
+
+  print(bic_power_plot)
+
+  save_gg(bic_power_plot, paste0("../figures/", cfg$threshold, "/BIC_plot_with_power"),
+          width = 65, height = 50, units = "mm", dpi = 400, bg = "white")
+
+  message("Done: BIC + power-bootstrap overlay for threshold ", cfg$threshold)
 }
 ```
 
@@ -255,6 +326,7 @@ for (cfg in threshold_configs) {
                        breaks = c(0,1000,2000,3000,4000,5000,6000,7000,8000,9000)) +
     scale_y_continuous(breaks = c(0, 0.25, 0.5)) +
     theme(
+      text         = element_text(size = 8),
       axis.title   = element_blank(),
       axis.ticks.y = element_blank(),
       axis.line.x  = element_blank(),
@@ -269,6 +341,7 @@ for (cfg in threshold_configs) {
                        breaks = c(0,1000,2000,3000,4000,5000,6000,7000,8000,9000)) +
     scale_y_continuous(breaks = c(0, 1, 2)) +
     theme(
+      text             = element_text(size = 8),
       axis.title       = element_blank(),
       axis.ticks.y     = element_blank(),
       legend.position  = 'bottom'
@@ -314,7 +387,11 @@ for (cfg in threshold_configs) {
       colour = NULL, y = NULL, x = NULL
     ) +
     scale_colour_manual(values = pall_k) +
-    theme(axis.ticks = element_blank())
+    theme(
+      text        = element_text(size = 8),
+      axis.ticks  = element_blank(),
+      plot.title  = element_text(size = 8)
+    )
 
   print(tree_dist_plot)
 
@@ -404,8 +481,13 @@ for (cfg in threshold_configs) {
 
   # ---- Plots ----
 
+  # Explicit limits (not just breaks) so every panel below plots the same genomic
+  # coordinate at the same physical x-position — panels whose own data don't span
+  # the full alignment (e.g. window_plot) would otherwise silently rescale to fit
+  # just their own data range, throwing off alignment with the other panels.
   x_scale <- scale_x_continuous(
     expand = c(0, 0),
+    limits = c(0, n_sites),
     breaks = c(0, 1000, 2000, 3000, 4000, 5000, 6000, 7000, 8000, 9000)
   )
 
@@ -414,14 +496,18 @@ for (cfg in threshold_configs) {
     geom_point(size = 7, shape = 108) +
     labs(title = paste0("Modal class — threshold: ", cfg$threshold)) +
     theme(
+      text             = element_text(size = 8),
       axis.title       = element_blank(),
+      axis.text        = element_text(size = 8),
       axis.ticks.y     = element_blank(),
       axis.text.y      = element_blank(),
       axis.line.y      = element_blank(),
       legend.position  = 'top',
       legend.title     = element_text(size = 7),
       legend.text      = element_text(size = 7),
-      legend.key.size  = unit(0.4, "lines")
+      legend.key.size  = unit(0.4, "lines"),
+      plot.title       = element_text(size = 8),
+      plot.margin      = margin(1, 1, 1, 1, "mm")
     ) +
     scale_colour_manual(values = pall_k) +
     guides(colour = guide_legend(override.aes = list(size = 4))) +
@@ -442,12 +528,14 @@ for (cfg in threshold_configs) {
     scale_colour_manual(values = pall_k) +
     x_scale +
     theme(
+      text            = element_text(size = 8),
       axis.title      = element_blank(),
       axis.text.x     = element_blank(),
       axis.ticks.x    = element_blank(),
       axis.text.y     = element_blank(),
       axis.ticks.y    = element_blank(),
-      legend.position = 'none'
+      legend.position = 'none',
+      plot.margin     = margin(1, 1, 1, 1, "mm")
     )
 
   # 2. Mean relative likelihood coloured by modal class
@@ -460,9 +548,14 @@ for (cfg in threshold_configs) {
     scale_y_continuous(breaks = c(0, 1, 2, 3, 4)) +
     scale_colour_manual(values = pall_k) +
     theme(
+      text            = element_text(size = 8),
       axis.title      = element_blank(),
+      axis.text.y     = element_text(size = 8),
+      axis.text.x     = element_blank(),
+      axis.ticks.x    = element_blank(),
       axis.ticks.y    = element_blank(),
-      legend.position = 'bottom'
+      legend.position = 'bottom',
+      plot.margin     = margin(1, 1, 1, 1, "mm")
     ) +
     guides(colour = 'none')
 
@@ -479,9 +572,14 @@ for (cfg in threshold_configs) {
     x_scale +
     scale_colour_manual(values = pall_k) +
     theme(
+      text            = element_text(size = 8),
       axis.title      = element_blank(),
+      axis.text.y     = element_text(size = 8),
+      axis.text.x     = element_blank(),
+      axis.ticks.x    = element_blank(),
       axis.ticks.y    = element_blank(),
-      legend.position = 'bottom'
+      legend.position = 'bottom',
+      plot.margin     = margin(1, 1, 1, 1, "mm")
     ) +
     guides(colour = 'none')
 
@@ -496,9 +594,12 @@ for (cfg in threshold_configs) {
     x_scale +
     scale_colour_manual(values = pall_k) +
     theme(
+      text            = element_text(size = 8),
       axis.title      = element_blank(),
+      axis.text       = element_text(size = 8),
       axis.ticks.y    = element_blank(),
-      legend.position = 'bottom'
+      legend.position = 'bottom',
+      plot.margin     = margin(1, 1, 1, 1, "mm")
     ) +
     guides(colour = 'none')
 
@@ -509,21 +610,36 @@ for (cfg in threshold_configs) {
     x_scale +
     scale_colour_manual(values = pall_k) +
     theme(
+      text            = element_text(size = 8),
       axis.title      = element_blank(),
+      axis.text.y     = element_text(size = 8),
+      axis.text.x     = element_blank(),
+      axis.ticks.x    = element_blank(),
       axis.ticks.y    = element_blank(),
-      legend.position = 'bottom'
+      legend.position = 'bottom',
+      plot.margin     = margin(1, 1, 1, 1, "mm")
     ) +
     guides(colour = 'none')
 
-  combined_plot <- (modal_class_plot / window_plot / mean_prob_plot / proportion_plot /
+  # window_plot/modal_class_plot keep their previous absolute size (10.32mm/17.20mm);
+  # the four lower panels are pinned to fixed heights - 18mm each, except the bottom
+  # one (entropy_modal_plot), which carries the x-axis ticks/labels and needs more room.
+  combined_plot <- (window_plot / modal_class_plot / mean_prob_plot / proportion_plot /
                      gappy_modal_plot / entropy_modal_plot) +
-                    plot_layout(heights = c(0.5, 0.3, 1, 1, 1, 1))
+                    plot_layout(heights = unit(c(10.32, 17.2, 18, 18, 18, 22.3), "mm"))
 
   print(combined_plot)
 
+  # 168mm was measured empirically (not calculated): patchwork adds inter-panel
+  # spacing on top of each plot's own plot.margin, so the true rendered height of
+  # the six panels above (fixed unit(mm) heights) exceeds their nominal sum + margins.
+  # Rendering at a deliberately oversized canvas and reading back the actual content
+  # extent gave ~167.5mm; a plain arithmetic sum consistently under-shoots and clips
+  # the bottom panel(s).
   save_raster_and_svg(function() print(combined_plot),
                        paste0("../figures/", cfg$threshold, "/sitelh_plots"),
-                       width = 165, height = 165.1, units = "mm", res = 300)
+                       width = 165, height = 168,
+                       units = "mm", res = 300)
 
   message("Done: site likelihood figures for threshold ", cfg$threshold)
 }
@@ -559,7 +675,8 @@ for (cfg in threshold_configs) {
       title = paste0("Initial 35-tree weights — threshold: ", cfg$threshold),
       x = "Tree", y = "Weight"
     ) +
-    theme_bw()
+    theme_bw() +
+    theme(text = element_text(size = 8), plot.title = element_text(size = 8))
   print(p_unordered)
 
   p_reordered <- ggplot(weights_df, aes(x = reorder(tree, -weight), y = weight)) +
@@ -568,7 +685,8 @@ for (cfg in threshold_configs) {
       title = paste0("Initial 35-tree weights (ranked) — threshold: ", cfg$threshold),
       x = "Tree", y = "Weight"
     ) +
-    theme_bw()
+    theme_bw() +
+    theme(text = element_text(size = 8), plot.title = element_text(size = 8))
   print(p_reordered)
 
   save_pdf_and_svg(function() print(p_unordered),
@@ -598,17 +716,19 @@ for (cfg in threshold_configs) {
     geom_col(fill = "grey45", width = 0.9) +
     geom_text(
       aes(label = round(weight, digits = 3), y = 0.02),
-      color = "white", size = 5, vjust = 0.5
+      color = "white", size = 8 / .pt, vjust = 0.5
     ) +
     labs(
       title = paste0("Best-", k, " model weights — threshold: ", cfg$threshold),
       y = "Model weight", x = "Tree"
     ) +
     theme(
+      text         = element_text(size = 8),
       axis.ticks   = element_blank(),
       axis.title.y = element_blank(),
-      axis.text.x  = element_text(size = 12),
-      axis.title.x = element_text(size = 9)
+      axis.text    = element_text(size = 8),
+      axis.title.x = element_text(size = 8),
+      plot.title   = element_text(size = 8)
     ) +
     guides(colour = 'none')
 
@@ -617,7 +737,7 @@ for (cfg in threshold_configs) {
   # PNG+SVG at the display size; a second PDF at a different (publication) aspect ratio
   # is also kept below — same plot, so one SVG for it is enough.
   save_gg(weight_plot, paste0("../figures/", cfg$threshold, "/weights_bestk"),
-          width = 100, height = 50, units = "mm", dpi = 400, bg = "white")
+          width = 65, height = 32, units = "mm", dpi = 400, bg = "white")
 
   pdf(paste0("../figures/", cfg$threshold, "/weights_bestk.pdf"), width = 5, height = 2)
   print(weight_plot)
@@ -697,7 +817,10 @@ ggplot(palldf, aes(x = tip, y = 1, fill = color)) +
   geom_point(shape = 22, size = 15) +
   scale_fill_identity() +
   theme_classic() +
-  theme(axis.text.y = element_blank(), axis.title = element_blank(), axis.ticks = element_blank())
+  theme(
+    text        = element_text(size = 8),
+    axis.text.y = element_blank(), axis.title = element_blank(), axis.ticks = element_blank()
+  )
 ```
 
 Helper to add sCF low-support dots (red = sCF < 33%):
@@ -733,10 +856,13 @@ make_contrib_df <- function(x) {
 }
 
 contrib_theme <- theme(
+  text               = element_text(size = 8),
   panel.grid.major.y = element_line(color = "grey90"),
   axis.ticks         = element_blank(),
+  axis.text          = element_text(size = 8),
   legend.position    = "none",
-  axis.title         = element_blank()
+  axis.title         = element_blank(),
+  plot.title         = element_text(size = 8)
 )
 ```
 
@@ -763,7 +889,7 @@ for (cfg in threshold_configs) {
     }
     save_raster_and_svg(draw_cophylo,
                          paste0("../figures/", cfg$threshold, "/", label, "_cophyloplot_w_scf"),
-                         width = 8, height = 7, units = "cm", res = 400)
+                         width = 63, height = 54, units = "mm", res = 400)
 
     # Taxon contribution to discordance
     disc       <- taxon.contribution.to.disc(t1, t2)
@@ -778,16 +904,15 @@ for (cfg in threshold_configs) {
     print(p)
     contrib_plots[[label]] <- p
 
-    # Individual SVG per pair (the combined PDF below is multi-page, which SVG can't hold)
-    ggsave(
-      paste0("../figures/", cfg$threshold, "/", label, "_taxon_contribution.svg"),
-      plot = p, device = "svg", width = 5, height = 1.5, units = "in", bg = "white"
-    )
+    # Individual SVG per pair (the combined PDF below is multi-page, which SVG can't hold).
+    contrib_svg <- paste0("../figures/", cfg$threshold, "/", label, "_taxon_contribution.svg")
+    ggsave(contrib_svg, plot = p, device = "svg", width = 57, height = 30, units = "mm", bg = "white")
+    set_svg_mm(contrib_svg, 57, 30)
   }
 
   pdf(
     paste0("../figures/", cfg$threshold, "/Fig_taxon_contribution.pdf"),
-    width = 5, height = 1.5, useDingbats = FALSE
+    width = 57 / 25.4, height = 30 / 25.4, useDingbats = FALSE
   )
   for (p in contrib_plots) print(p)
   dev.off()
