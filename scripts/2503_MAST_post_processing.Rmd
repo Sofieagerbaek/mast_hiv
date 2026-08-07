@@ -275,6 +275,64 @@ for (cfg in threshold_configs) {
 }
 ```
 
+Same idea, but standardized within each curve as ΔBIC (BIC minus that curve's own
+minimum). Because the standardization is per-curve, the absolute-scale offset between real
+and simulated BIC values (real data has some missing/ambiguous sites that cost the
+likelihood almost nothing; simulated replicates are fully resolved, so their BIC sits on a
+different absolute scale — see below) drops out entirely; only each curve's own shape
+matters. Unlike a BIC weight (exp(-0.5 * ΔBIC), normalized), ΔBIC isn't squashed into a
+near-binary spike when the gaps are large, so runner-up k's stay visible. The empirical
+curve runs its full k = 2..35 sweep (ΔBIC computed against its own minimum over that whole
+range); the replicate curves stop at k = 10, since that's the full range the power
+bootstrap ever refit:
+```{r bic_delta_power_overlay, fig.show='hold'}
+delta_bic <- function(bic) bic - min(bic, na.rm = TRUE)
+
+for (cfg in threshold_configs) {
+
+  BIC_table <- read.csv(
+    paste0("../output/", cfg$output_dir, "/bic_values.csv"),
+    header = TRUE
+  ) %>%
+    filter(n >= 2) %>%
+    mutate(delta = delta_bic(value))
+
+  rep_bic <- read.csv(paste0(
+    "../power_bootstrap/results/", cfg$threshold, "/bic_by_rep_", cfg$threshold, ".csv"
+  )) %>%
+    group_by(rep) %>%
+    mutate(delta = delta_bic(BIC)) %>%
+    ungroup()
+
+  bic_delta_plot <- ggplot(BIC_table, aes(x = n, y = delta)) +
+    geom_line(
+      data = rep_bic, aes(x = k, y = delta, group = rep),
+      colour = "grey70", alpha = 0.15, linewidth = 0.3, inherit.aes = FALSE
+    ) +
+    geom_line(colour = "black", linewidth = 0.4) +
+    geom_point(colour = "black", size = 1.2) +
+    geom_vline(xintercept = cfg$best_k, linetype = "dashed", colour = "grey50") +
+    scale_x_continuous(breaks = c(2, seq(5, 35, 5))) +
+    theme_bw() +
+    labs(title = paste0("Gap threshold: ", cfg$threshold, "  |  best k = ", cfg$best_k)) +
+    theme(
+      text                = element_text(size = 8),
+      axis.ticks          = element_blank(),
+      panel.grid.minor    = element_blank(),
+      axis.text           = element_text(size = 8, colour = "black"),
+      axis.title          = element_blank(),
+      plot.title          = element_text(size = 8)
+    )
+
+  print(bic_delta_plot)
+
+  save_gg(bic_delta_plot, paste0("../figures/", cfg$threshold, "/BIC_delta_plot_with_power"),
+          width = 65, height = 50, units = "mm", dpi = 400, bg = "white")
+
+  message("Done: delta-BIC + power-bootstrap overlay for threshold ", cfg$threshold)
+}
+```
+
 
 ### Gappiness and entropy of alignments
 
